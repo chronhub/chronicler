@@ -1,0 +1,34 @@
+<?php
+declare(strict_types=1);
+
+namespace Chronhub\Chronicler\Support\BankAccount\Model\Account;
+
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerId;
+use Chronhub\Foundation\Aggregate\AggregateChanged;
+use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
+
+final class DepositMade extends AggregateChanged
+{
+    public static function forUser(AccountId $accountId, CustomerId $customerId, int $deposit): self
+    {
+        return self::occur($accountId->toString(), [
+            'customerId' => $customerId->toString(),
+            'deposit'    => $deposit
+        ]);
+    }
+
+    public function customerId(): CustomerId|AggregateId
+    {
+        return CustomerId::fromString($this->content['customer_id']);
+    }
+
+    public function accountId(): AccountId|AggregateId
+    {
+        return AccountId::fromString($this->aggregateId());
+    }
+
+    public function deposit(): int
+    {
+        return $this->content['deposit'];
+    }
+}
