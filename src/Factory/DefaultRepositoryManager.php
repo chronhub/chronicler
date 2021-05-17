@@ -103,7 +103,7 @@ final class DefaultRepositoryManager implements RepositoryManager
             $connection = $this->fromChronicler('connections.default');
         }
 
-        $strategy = $connection['strategy'];
+        $strategy = $this->fromChronicler("connections.$connection.strategy");
 
         // todo handler strategy as service
         // as we can not handle service otb cause of stream name

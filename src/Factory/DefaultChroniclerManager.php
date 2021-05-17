@@ -86,7 +86,7 @@ final class DefaultChroniclerManager implements ChroniclerManager
         $method = 'create' . Str::studly($driver . 'Driver');
 
         /** @covers createInMemoryDriver */
-        /** @covers createPgsqlChronicleDriver */
+        /** @covers createPgsqlDriver */
         if (!method_exists($this, $method)) {
             throw new RuntimeException(
                 "Unable to resolve chronicle store with name $name and driver $driver"
@@ -127,7 +127,7 @@ final class DefaultChroniclerManager implements ChroniclerManager
         throw new RuntimeException("Unable to configure chronicler event decorator");
     }
 
-    private function createPgsqlChronicleDriver(array $config): Chronicler
+    private function createPgsqlDriver(array $config): Chronicler
     {
         /** @var Connection $connection */
         $connection = $this->app['db']->connection('pgsql');

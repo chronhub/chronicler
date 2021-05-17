@@ -20,7 +20,7 @@ return [
     */
 
     'provider' => [
-        'eloquent'  => '\Chronhub\Chronicler\Driver\Connection\EventStream::class',
+        'eloquent'  => '\Chronhub\Chronicler\Connection\Model\EventStream',
         'in_memory' => \Chronhub\Chronicler\Driver\InMemory\InMemoryEventStream::class,
     ],
 
