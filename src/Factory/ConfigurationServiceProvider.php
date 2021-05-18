@@ -4,11 +4,7 @@ declare(strict_types=1);
 namespace Chronhub\Chronicler\Factory;
 
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Foundation\CachesConfiguration;
-use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
-use function is_array;
-use function is_numeric;
 
 final class ConfigurationServiceProvider extends ServiceProvider
 {
@@ -35,48 +31,20 @@ final class ConfigurationServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        $this->mergeConfigFrom($this->chroniclerPath, 'chronicler');
-        $this->mergeConfigFrom($this->repositoryPath, 'chronicler');
+        $packageConfig = array_merge(
+            require $this->chroniclerPath,
+            require $this->repositoryPath,
+        );
+
+        $chronicler = $this->app['config']->get('chronicler', []);
+        $repositories = $this->app['config']->get('repositories', []);
+
+        $this->app['config']->set('chronicler', array_merge($packageConfig, $chronicler, $repositories));
     }
 
     private function publishConfig(): void
     {
-        $this->publishes([
-            $this->chroniclerPath => config_path('chronicler.php'),
-            $this->repositoryPath => config_path('repositories.php'),
-        ]);
-    }
-
-    protected function mergeConfigFrom($path, $key)
-    {
-        if (!($this->app instanceof CachesConfiguration && $this->app->configurationIsCached())) {
-            $config = $this->app['config']->get($key, []);
-
-            $this->app['config']->set($key, $this->mergeConfig(require $path, $config));
-        }
-    }
-
-    //@see https://gist.github.com/koenhoeijmakers/0a8e326ee3b12a826d73be38693fb647
-    private function mergeConfig(array $original, array $merging): array
-    {
-        $array = array_merge($original, $merging);
-
-        foreach ($original as $key => $value) {
-            if (!is_array($value)) {
-                continue;
-            }
-
-            if (!Arr::exists($merging, $key)) {
-                continue;
-            }
-
-            if (is_numeric($key)) {
-                continue;
-            }
-
-            $array[$key] = $this->mergeConfig($value, $merging[$key]);
-        }
-
-        return $array;
+        $this->publishes([$this->repositoryPath => config_path('repositories.php')]);
+        $this->publishes([$this->chroniclerPath => config_path('chronicler.php')]);
     }
 }
