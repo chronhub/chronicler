@@ -36,7 +36,7 @@ final class PgsqlAggregateStreamPersistence implements StreamPersistence
         );
 
         DB::statement(
-            "CREATE UNIQUE INDEX on $tableName ((headers->>'_aggregate_version'));"
+            "CREATE UNIQUE INDEX on $tableName ((headers->>'__aggregate_version'));"
         );
 
         return null;
