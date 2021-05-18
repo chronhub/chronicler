@@ -111,7 +111,7 @@ abstract class AbstractInMemoryChronicler implements InMemoryChronicler
         $events = (new Collection($this->streams->get($streamName->toString())))
             ->sortBy(function (DomainEvent $event): int {
                 return $event->header(Header::AGGREGATE_VERSION);
-            }, 0, $filter->orderBy() === 'desc')
+            }, SORT_NUMERIC, $filter->orderBy() === 'desc')
             ->filter($filter->filterQuery());
 
         if ($events->isEmpty()) {
