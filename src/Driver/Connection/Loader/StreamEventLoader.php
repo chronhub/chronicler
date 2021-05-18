@@ -20,6 +20,7 @@ abstract class StreamEventLoader
         // A stream not found exception is raised when a stream name,
         // which part of the stream table name raise a query exception
         // and also, when stream events are empty
+
         try {
             $streamEvents = $this->generateFrom($builder, $streamName);
 
@@ -27,11 +28,18 @@ abstract class StreamEventLoader
                 throw StreamNotFound::withStreamName($streamName);
             }
 
+            // checkMe some issue with getReturn from lazy collection
+            // as it duplicate queries
+
+            $count = 0;
+
             foreach ($streamEvents as $streamEvent) {
                 yield $this->eventConverter->toDomainEvent($streamEvent);
+
+                $count++;
             }
 
-            return $streamEvents->getReturn();
+            return $count;
         } catch (QueryException $queryException) {
             if ('00000' !== $queryException->getCode()) {
                 throw StreamNotFound::withStreamName($streamName);

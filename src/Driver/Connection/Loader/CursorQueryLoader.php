@@ -17,6 +17,6 @@ final class CursorQueryLoader extends StreamEventLoader
 
     protected function generateFrom(Builder $builder, StreamName $StreamName): Generator
     {
-        yield from $builder->cursor();
+       yield from $builder->cursor();
     }
 }

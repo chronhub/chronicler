@@ -9,6 +9,6 @@ class StreamNotFound extends RuntimeException
 {
     public static function withStreamName(StreamName $streamName): self
     {
-        return new self("Stream name {$streamName->toString()} not found");
+        return new self("Stream {$streamName->toString()} not found");
     }
 }

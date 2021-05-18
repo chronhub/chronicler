@@ -10,7 +10,7 @@ use Chronhub\Foundation\Support\Contracts\Message\Header;
 use Chronhub\Foundation\Support\Contracts\Message\MessageSerializer;
 use stdClass;
 
-final class EventConverter
+class EventConverter
 {
     public function __construct(private MessageSerializer $eventSerializer,
                                 private JsonEncoder $jsonEncoder)
