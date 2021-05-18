@@ -17,9 +17,9 @@ abstract class StreamEventLoader
 
     public function query(Builder $builder, StreamName $streamName): Generator
     {
-        // A stream not found exception is raised when a stream name,
-        // which part of the stream table name raise a query exception
-        // and also, when stream events are empty
+        // A stream not found exception is raised, when a stream name,
+        // which part of the table name raise a query exception
+        // and when stream events are empty
 
         try {
             $streamEvents = $this->generateFrom($builder, $streamName);
@@ -28,7 +28,7 @@ abstract class StreamEventLoader
                 throw StreamNotFound::withStreamName($streamName);
             }
 
-            // checkMe some issue with getReturn from lazy collection
+            // checkMe some issue with whenEmpty from lazy collection
             // as it duplicate queries
 
             $count = 0;
