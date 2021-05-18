@@ -16,10 +16,8 @@ use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Foundation\Support\Contracts\Message\Header;
 use Generator;
 use Illuminate\Support\Collection;
-use function array_filter;
 use function count;
 use function is_string;
-use function usort;
 
 abstract class AbstractInMemoryChronicler implements InMemoryChronicler
 {
@@ -65,7 +63,7 @@ abstract class AbstractInMemoryChronicler implements InMemoryChronicler
 
     public function retrieveFiltered(StreamName $streamName, QueryFilter $queryFilter): Generator
     {
-        if(!$queryFilter instanceof InMemoryQueryFilter){
+        if (!$queryFilter instanceof InMemoryQueryFilter) {
             throw new InvalidArgumentException('Query filter must implements ' . InMemoryQueryFilter::class);
         }
 
@@ -111,20 +109,13 @@ abstract class AbstractInMemoryChronicler implements InMemoryChronicler
             throw StreamNotFound::withStreamName($streamName);
         }
 
-        $events = $this->streams->get($streamName->toString());
+        $events = collect($this->streams->get($streamName->toString()))
+            ->sortBy(function (DomainEvent $event): int {
+                return $event->header(Header::AGGREGATE_VERSION);
+            }, 0, $filter->orderBy() === 'desc' ? true : false)
+            ->filter($filter->filterQuery());
 
-        usort($events, function (DomainEvent $previous, DomainEvent $next) use ($filter) {
-            $nextVersion = $next->header(Header::AGGREGATE_VERSION);
-            $previousVersion = $previous->header(Header::AGGREGATE_VERSION);
-
-            return $filter->orderBy() === 'desc'
-                ? $nextVersion <=> $previousVersion
-                : $previousVersion <=> $nextVersion;
-        });
-
-        $events = array_filter($events, $filter->filterQuery(), ARRAY_FILTER_USE_BOTH);
-
-        if (0 === count($events)) {
+        if ($events->isEmpty()) {
             throw StreamNotFound::withStreamName($streamName);
         }
 
@@ -139,10 +130,7 @@ abstract class AbstractInMemoryChronicler implements InMemoryChronicler
             $internalPosition = Header::INTERNAL_POSITION;
 
             if ($event->hasNot($internalPosition)) {
-                $event = $event->withHeader(
-                    $internalPosition,
-                    $event->header(Header::AGGREGATE_VERSION)
-                );
+                $event = $event->withHeader($internalPosition, $event->header(Header::AGGREGATE_VERSION));
             }
         }
 
