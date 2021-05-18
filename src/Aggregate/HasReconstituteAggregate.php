@@ -24,10 +24,12 @@ trait HasReconstituteAggregate
         try {
             $history = $this->fromHistory($aggregateId, null);
 
-            $firstEvent = $history->current();
+            if(!$history->valid()){
+                return null;
+            }
 
             /** @var AggregateRoot&static $aggregateRoot */
-            $aggregateRoot = $this->aggregateType->determineFromEvent($firstEvent);
+            $aggregateRoot = $this->aggregateType->determineFromEvent($history->current());
 
             return $aggregateRoot::reconstituteFromEvents($aggregateId, $history);
         } catch (StreamNotFound) {
@@ -44,11 +46,8 @@ trait HasReconstituteAggregate
     {
         $streamName = $this->streamProducer->determineStreamName($aggregateId->toString());
 
-        // todo test query filter with snapshot
-        yield from $events = $queryFilter instanceof QueryFilter
+        return yield from $queryFilter instanceof QueryFilter
             ? $this->chronicler->retrieveFiltered($streamName, $queryFilter)
             : $this->chronicler->retrieveAll($streamName, $aggregateId);
-
-        return (int)$events->getReturn();
     }
 }

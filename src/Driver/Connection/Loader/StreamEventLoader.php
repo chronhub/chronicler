@@ -10,8 +10,6 @@ use Chronhub\Chronicler\Stream\StreamName;
 use Generator;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\QueryException;
-use Illuminate\Support\Enumerable;
-use stdClass;
 
 abstract class StreamEventLoader
 {
@@ -20,10 +18,17 @@ abstract class StreamEventLoader
     public function query(Builder $builder, StreamName $streamName): Generator
     {
         try {
-            return yield from $this->fromCollection($builder, $streamName)
-                ->map(function (stdClass $payload) {
-                    return $this->eventConverter->toDomainEvent($payload);
-                });
+            $streamEvents = $this->generateFrom($builder, $streamName);
+
+            if (null === $streamEvents->current()) {
+                throw StreamNotFound::withStreamName($streamName);
+            }
+
+            foreach ($streamEvents as $streamEvent) {
+                yield $this->eventConverter->toDomainEvent($streamEvent);
+            }
+
+            return $streamEvents->getReturn();
         } catch (QueryException $queryException) {
             if ('00000' !== $queryException->getCode()) {
                 throw StreamNotFound::withStreamName($streamName);
@@ -33,5 +38,5 @@ abstract class StreamEventLoader
         }
     }
 
-    abstract protected function fromCollection(Builder $builder, StreamName $StreamName): Enumerable;
+    abstract protected function generateFrom(Builder $builder, StreamName $StreamName): Generator;
 }

@@ -5,8 +5,8 @@ namespace Chronhub\Chronicler\Driver\Connection\Loader;
 
 use Chronhub\Chronicler\Driver\Connection\EventConverter;
 use Chronhub\Chronicler\Stream\StreamName;
+use Generator;
 use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Enumerable;
 
 final class CursorQueryLoader extends StreamEventLoader
 {
@@ -15,8 +15,8 @@ final class CursorQueryLoader extends StreamEventLoader
         //
     }
 
-    protected function fromCollection(Builder $builder, StreamName $StreamName): Enumerable
+    protected function generateFrom(Builder $builder, StreamName $StreamName): Generator
     {
-        return $builder->cursor();
+        yield from $builder->cursor();
     }
 }
