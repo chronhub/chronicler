@@ -107,7 +107,7 @@ final class DefaultRepositoryManager implements RepositoryManager
 
         // todo handler strategy as service
         // as we can not handle service otb cause of stream name
-        // if $this->app->bound($strategy)
+        // if $this->app->bound($strategy) // with setter stream name
 
         if ($strategy === 'default') {
             $strategy = $this->fromChronicler("strategy.default") ?? null;

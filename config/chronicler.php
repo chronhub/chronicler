@@ -20,7 +20,7 @@ return [
     */
 
     'provider' => [
-        'eloquent'  => '\Chronhub\Chronicler\Connection\Model\EventStream',
+        'eloquent'  => \Chronhub\Chronicler\Driver\Connection\EventStream::class,
         'in_memory' => \Chronhub\Chronicler\Driver\InMemory\InMemoryEventStream::class,
     ],
 
@@ -38,12 +38,12 @@ return [
         'default' => 'single',
 
         'aggregate' => [
-            'persistence' => '\Chronhub\Chronicler\Connection\Persistence\PgsqlAggregateStreamPersistence',
+            'persistence' => \Chronhub\Chronicler\Driver\Connection\Persistence\PgsqlAggregateStreamPersistence::class,
             'producer'    => \Chronhub\Chronicler\Producer\OneStreamPerAggregate::class,
         ],
 
         'single' => [
-            'persistence' => '\Chronhub\Chronicler\Connection\Persistence\PgsqlSingleStreamPersistence',
+            'persistence' => \Chronhub\Chronicler\Driver\Connection\Persistence\PgsqlSingleStreamPersistence::class,
             'producer'    => \Chronhub\Chronicler\Producer\SingleStreamPerAggregate::class,
         ],
     ],
@@ -53,7 +53,6 @@ return [
     | Event store connection
     |--------------------------------------------------------------------------
     |
-    | todo handle strategy connection as service (todo in repo too)
     */
 
     'connections' => [
@@ -75,9 +74,10 @@ return [
                 'use_event_decorator' => true
             ],
 
-            'scope'    => '\Chronhub\Chronicler\Driver\Connection\Pgsql\PgsqlConnectionQueryScope::class',
-            'strategy' => 'default',
-            'provider' => 'eloquent',
+            'scope'        => '\Chronhub\Chronicler\Driver\Connection\Pgsql\PgsqlConnectionQueryScope::class',
+            'strategy'     => 'default',
+            'provider'     => 'eloquent',
+            'query_loader' => \Chronhub\Chronicler\Driver\Connection\Loader\LazyQueryLoader::class
         ],
 
         'in_memory' => [

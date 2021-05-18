@@ -3,12 +3,18 @@ declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Factory;
 
+use Chronhub\Chronicler\Driver\Connection\EventConverter;
+use Chronhub\Chronicler\Driver\Connection\Loader\LazyQueryLoader;
+use Chronhub\Chronicler\Driver\Connection\Loader\StreamEventLoader;
+use Chronhub\Chronicler\Driver\Connection\WriteLock\NoWriteLock;
+use Chronhub\Chronicler\Driver\Connection\WriteLock\PgsqlWriteLock;
 use Chronhub\Chronicler\Driver\InMemory\InMemoryChronicler;
 use Chronhub\Chronicler\Driver\InMemory\InMemoryTransactionalChronicler;
 use Chronhub\Chronicler\Exception\InvalidArgumentException;
 use Chronhub\Chronicler\Exception\RuntimeException;
 use Chronhub\Chronicler\GenericEventChronicler;
 use Chronhub\Chronicler\GenericTransactionalEventChronicler;
+use Chronhub\Chronicler\PgsqlChronicler;
 use Chronhub\Chronicler\Support\Contracts\Chronicler;
 use Chronhub\Chronicler\Support\Contracts\EventableChronicler;
 use Chronhub\Chronicler\Support\Contracts\Factory\ChroniclerManager;
@@ -23,6 +29,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Connection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use function is_array;
 use function is_string;
 
 final class DefaultChroniclerManager implements ChroniclerManager
@@ -132,56 +139,34 @@ final class DefaultChroniclerManager implements ChroniclerManager
         /** @var Connection $connection */
         $connection = $this->app['db']->connection('pgsql');
 
-        $className = '\Chronhub\Chronicler\Connection\PgsqlChronicler';
-
-        if (!class_exists($className)) {
-            throw new RuntimeException("Require chronicler connection to be loaded");
-        }
-
-        return $this->resolveConnection($connection, $className, $config);
+        return $this->resolveConnection($connection, PgsqlChronicler::class, $config);
     }
 
     private function resolveConnection(Connection $connection, string $chroniclerClassName, array $config): Chronicler
     {
-        $streamEventLoader = '\Chronhub\Chronicler\Connection\StreamEventLoader';
-
         return new $chroniclerClassName(
             $connection,
             $this->determineEventStreamProvider($config),
             $this->determineStreamPersistence($config),
             $this->determineWriteLock($connection, $config),
-            $this->app->make($streamEventLoader),
+            $this->determineStreamEventLoader($config),
         );
     }
 
     private function determineWriteLock(Connection $connection, array $config): WriteLockStrategy
     {
-        $instance = null;
-
         $useWriteLock = $config['options']['write_lock'] ?? false;
 
         if (!$useWriteLock) {
-            $nullWriteLock = '\Chronhub\Chronicler\Connection\WriteLock\NullWriteLock';
-
-            $instance = new $nullWriteLock();
+            return new NoWriteLock();
         }
 
         $driver = $connection->getDriverName();
 
-        $pgsqlWriteLock = '\Chronhub\Chronicler\Connection\WriteLock\PgsqlWriteLock';
-
-        if (null === $instance && true === $useWriteLock) {
-            $instance = match ($driver) {
-                'pgsql' => new $pgsqlWriteLock($connection),
-                default => throw new RuntimeException("Unavailable write lock strategy for driver $driver"),
-            };
-        }
-
-        if ($instance instanceof WriteLockStrategy) {
-            return $instance;
-        }
-
-        throw new RuntimeException("Unavailable write lock strategy for driver $driver");
+        return match ($driver) {
+            'pgsql' => new PgsqlWriteLock($connection),
+            default => throw new RuntimeException("Unavailable write lock strategy for driver $driver"),
+        };
     }
 
     private function determineStreamPersistence(array $config): StreamPersistence
@@ -203,6 +188,19 @@ final class DefaultChroniclerManager implements ChroniclerManager
         }
 
         return $this->app->make($persistence);
+    }
+
+    private function determineStreamEventLoader(array $config): StreamEventLoader
+    {
+        $eventLoader = $config['query_loader'] ?? null;
+
+        if (is_string($eventLoader)) {
+            return $this->app->make($eventLoader);
+        }
+
+        return new LazyQueryLoader(
+            $this->app->make(EventConverter::class)
+        );
     }
 
     private function createInMemoryDriver(array $config): Chronicler

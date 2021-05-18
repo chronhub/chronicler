@@ -25,7 +25,7 @@ final class PublishTransactionalInMemoryEventsTest extends TestCaseWithProphecy
     public function it_raise_exception_with_invalid_chronicler_on_construction(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Chronicler is not supported by the message subscriber');
+        $this->expectExceptionMessage('Message subscriber does not support chronicler type');
 
         $chronicler = $this->prophesize(Chronicler::class)->reveal();
         $reporter = $this->prophesize(ReportEvent::class)->reveal();
