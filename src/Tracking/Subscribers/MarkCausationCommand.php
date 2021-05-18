@@ -47,9 +47,9 @@ final class MarkCausationCommand implements MessageSubscriber
                 }
             }, 1000);
 
-        // checkMe to remove and also return type from subscribe methods
         $tracker->listen(Reporter::FINALIZE_EVENT,
             function (): void {
+                $this->chronicler->unsubscribe(...$this->oneTimeListeners);
                 $this->oneTimeListeners = [];
             },1000);
     }

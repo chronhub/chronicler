@@ -49,7 +49,7 @@ final class PgsqlChronicler extends AbstractChroniclerConnection implements Tran
         try {
             $this
                 ->queryBuilder($streamName)
-                ->insert($this->eventsToArray($streamEvents));
+                ->insert($this->serializeStreamEvents($streamEvents));
         } catch (QueryException $queryException) {
             match ($queryException->getCode()) {
                 '42P01' => throw StreamNotFound::withStreamName($streamName),

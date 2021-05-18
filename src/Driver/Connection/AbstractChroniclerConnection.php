@@ -126,11 +126,11 @@ abstract class AbstractChroniclerConnection implements ChroniclerConnection
         return $this->connection->table($tableName);
     }
 
-    protected function eventsToArray(Enumerable $streamEvents): array
+    protected function serializeStreamEvents(Enumerable $streamEvents): array
     {
-        $callback = fn(DomainEvent $event): array => $this->persistenceStrategy->serializeMessage($event);
-
-        return $streamEvents->map($callback)->toArray();
+        return $streamEvents->map(
+            fn(DomainEvent $event): array => $this->persistenceStrategy->serializeMessage($event)
+        )->toArray();
     }
 
     protected function handleStreamNotFound(StreamNotFound $exception): void

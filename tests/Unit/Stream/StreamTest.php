@@ -18,7 +18,7 @@ class StreamTest extends TestCase
      */
     public function it_can_be_constructed(): void
     {
-        $streamName = new StreamName('customer_stream');
+        $streamName = new StreamName('customer');
 
         $stream = new Stream($streamName);
 
@@ -38,7 +38,7 @@ class StreamTest extends TestCase
      */
     public function it_can_generate_events(iterable $iterable): void
     {
-        $streamName = new StreamName('customer_stream');
+        $streamName = new StreamName('customer');
 
         $stream = new Stream($streamName, $iterable);
 
@@ -49,6 +49,32 @@ class StreamTest extends TestCase
         }
 
         $this->assertEquals(1, $events->getReturn());
+    }
+
+    /**
+     * @test
+     */
+    public function it_return_enumerable_streams(): void
+    {
+        $streamName = new StreamName('customer');
+
+        $collection = new LazyCollection();
+
+        $stream = new Stream($streamName, $collection);
+
+        $this->assertEquals($collection, $stream->enumerator());
+    }
+
+    /**
+     * @test
+     */
+    public function it_return_enumerable_streams_2(): void
+    {
+        $streamName = new StreamName('customer');
+
+        $stream = new Stream($streamName, []);
+
+        $this->assertInstanceOf(LazyCollection::class, $stream->enumerator());
     }
 
     public function provideIterableEvents(): Generator
