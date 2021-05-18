@@ -104,15 +104,14 @@ abstract class AbstractInMemoryChronicler implements InMemoryChronicler
     protected function filterEvents(StreamName $streamName,
                                     InMemoryQueryFilter $filter): Generator
     {
-
         if (!$this->hasStream($streamName)) {
             throw StreamNotFound::withStreamName($streamName);
         }
 
-        $events = collect($this->streams->get($streamName->toString()))
+        $events = (new Collection($this->streams->get($streamName->toString())))
             ->sortBy(function (DomainEvent $event): int {
                 return $event->header(Header::AGGREGATE_VERSION);
-            }, 0, $filter->orderBy() === 'desc' ? true : false)
+            }, 0, $filter->orderBy() === 'desc')
             ->filter($filter->filterQuery());
 
         if ($events->isEmpty()) {
