@@ -32,7 +32,7 @@ final class PgsqlChronicler extends AbstractChroniclerConnection implements Tran
 
     public function persist(Stream $stream): void
     {
-        $streamEvents = $stream->iterator();
+        $streamEvents = $stream->enumerator();
 
         if ($streamEvents->isEmpty()) {
             return;

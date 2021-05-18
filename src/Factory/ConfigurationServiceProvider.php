@@ -4,16 +4,21 @@ declare(strict_types=1);
 namespace Chronhub\Chronicler\Factory;
 
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Foundation\CachesConfiguration;
+use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
+use function is_array;
+use function is_numeric;
 
 final class ConfigurationServiceProvider extends ServiceProvider
 {
-    private array $configKeys = ['chronicler', 'repositories'];
-
     /**
      * @var Application
      */
     public $app;
+
+    protected string $chroniclerPath = __DIR__ . '/../../config/chronicler.php';
+    protected string $repositoryPath = __DIR__ . '/../../config/repositories.php';
 
     public function boot(): void
     {
@@ -30,22 +35,48 @@ final class ConfigurationServiceProvider extends ServiceProvider
 
     public function register(): void
     {
-        $this->mergeConfigFrom(config_path('chronicler.php'), 'chronicler');
-        $this->mergeConfigFrom(config_path('repositories.php'), 'chronicler');
+        $this->mergeConfigFrom($this->chroniclerPath, 'chronicler');
+        $this->mergeConfigFrom($this->repositoryPath, 'chronicler');
     }
 
     private function publishConfig(): void
     {
-        foreach ($this->configKeys as $configKey) {
-            $this->publishes(
-                [$this->getConfigPath($configKey) => config_path($configKey . '.php')],
-                'chronicler'
-            );
+        $this->publishes([
+            $this->chroniclerPath => config_path('chronicler.php'),
+            $this->repositoryPath => config_path('repositories.php'),
+        ]);
+    }
+
+    protected function mergeConfigFrom($path, $key)
+    {
+        if (!($this->app instanceof CachesConfiguration && $this->app->configurationIsCached())) {
+            $config = $this->app['config']->get($key, []);
+
+            $this->app['config']->set($key, $this->mergeConfig(require $path, $config));
         }
     }
 
-    private function getConfigPath(string $key): string
+    //@see https://gist.github.com/koenhoeijmakers/0a8e326ee3b12a826d73be38693fb647
+    private function mergeConfig(array $original, array $merging): array
     {
-        return __DIR__ . '/../../config/' . $key . '.php';
+        $array = array_merge($original, $merging);
+
+        foreach ($original as $key => $value) {
+            if (!is_array($value)) {
+                continue;
+            }
+
+            if (!Arr::exists($merging, $key)) {
+                continue;
+            }
+
+            if (is_numeric($key)) {
+                continue;
+            }
+
+            $array[$key] = $this->mergeConfig($value, $merging[$key]);
+        }
+
+        return $array;
     }
 }

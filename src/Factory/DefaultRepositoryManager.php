@@ -23,6 +23,7 @@ use Illuminate\Contracts\Cache\Store;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Arr;
+use function is_array;
 use function is_string;
 
 final class DefaultRepositoryManager implements RepositoryManager
@@ -103,11 +104,9 @@ final class DefaultRepositoryManager implements RepositoryManager
             $connection = $this->fromChronicler('connections.default');
         }
 
-        $strategy = $this->fromChronicler("connections.$connection.strategy");
-
-        // todo handler strategy as service
-        // as we can not handle service otb cause of stream name
-        // if $this->app->bound($strategy) // with setter stream name
+        $strategy = is_array($connection)
+            ? $connection['strategy']
+            : $this->fromChronicler("connections.$connection.strategy");
 
         if ($strategy === 'default') {
             $strategy = $this->fromChronicler("strategy.default") ?? null;

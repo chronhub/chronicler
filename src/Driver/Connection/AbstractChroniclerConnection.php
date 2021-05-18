@@ -22,7 +22,7 @@ use Illuminate\Database\Connection;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\QueryException;
-use Illuminate\Support\LazyCollection;
+use Illuminate\Support\Enumerable;
 
 abstract class AbstractChroniclerConnection implements ChroniclerConnection
 {
@@ -126,14 +126,14 @@ abstract class AbstractChroniclerConnection implements ChroniclerConnection
         return $this->connection->table($tableName);
     }
 
-    protected function eventsToArray(LazyCollection $streamEvents): array
+    protected function eventsToArray(Enumerable $streamEvents): array
     {
         $callback = fn(DomainEvent $event): array => $this->persistenceStrategy->serializeMessage($event);
 
         return $streamEvents->map($callback)->toArray();
     }
 
-    private function handleStreamNotFound(StreamNotFound $exception): void
+    protected function handleStreamNotFound(StreamNotFound $exception): void
     {
         if ($this instanceof TransactionalChronicler && $this->connection->transactionLevel() > 0) {
             $this->connection->rollBack();

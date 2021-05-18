@@ -5,7 +5,6 @@ namespace Chronhub\Chronicler\Stream;
 
 use Generator;
 use Illuminate\Support\LazyCollection;
-use Iterator;
 
 final class Stream
 {
@@ -30,7 +29,7 @@ final class Stream
         return $this->events->count();
     }
 
-    public function iterator(): LazyCollection
+    public function enumerator(): LazyCollection
     {
         return $this->events;
     }
