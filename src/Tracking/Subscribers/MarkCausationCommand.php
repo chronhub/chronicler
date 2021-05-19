@@ -40,15 +40,13 @@ final class MarkCausationCommand implements MessageSubscriber
             function (ContextualMessage $context): void {
                 $command = $this->determineCommand($context->message());
 
-                $callback = function (ContextualStream $stream) use ($command): void {
-                    if ($command) {
+                if ($command) {
+                    $callback = function (ContextualStream $stream) use ($command): void {
                         $messageDecorator = $this->correlationMessageDecorator($command);
 
                         $stream->decorateStreamEvents($messageDecorator);
-                    }
-                };
+                    };
 
-                if ($command) {
                     $this->oneTimeListeners[] = $this->subscribeOnFirstCommitEvent($callback);
 
                     $this->oneTimeListeners[] = $this->subscribeOnPersistStreamEvent($callback);
@@ -85,7 +83,7 @@ final class MarkCausationCommand implements MessageSubscriber
 
     private function correlationMessageDecorator(DomainCommand $command): MessageDecorator
     {
-        $eventId = $command->header(Header::EVENT_ID)->toString();
+        $eventId = (string)$command->header(Header::EVENT_ID);
         $eventType = $command->header(Header::EVENT_TYPE);
 
         return new class($eventId, $eventType) implements MessageDecorator {
