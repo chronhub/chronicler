@@ -5,8 +5,9 @@ namespace Chronhub\Chronicler\Driver\Connection\Loader;
 
 use Chronhub\Chronicler\Driver\Connection\EventConverter;
 use Chronhub\Chronicler\Stream\StreamName;
-use Generator;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
+use Illuminate\Support\LazyCollection;
 
 final class CursorQueryLoader extends StreamEventLoader
 {
@@ -15,8 +16,8 @@ final class CursorQueryLoader extends StreamEventLoader
         //
     }
 
-    protected function generateFrom(Builder $builder, StreamName $StreamName): Generator
+    protected function generateFrom(Builder $builder, StreamName $StreamName): LazyCollection|Collection
     {
-       yield from $builder->cursor();
+        return $builder->cursor();
     }
 }

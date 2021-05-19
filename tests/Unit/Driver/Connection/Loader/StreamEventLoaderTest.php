@@ -12,8 +12,8 @@ use Chronhub\Chronicler\Stream\StreamName;
 use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
 use Chronhub\Chronicler\Tests\Double\SomeQueryException;
 use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
-use Generator;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
@@ -104,7 +104,7 @@ final class StreamEventLoaderTest extends TestCaseWithProphecy
         $this->expectException(StreamNotFound::class);
         $this->expectExceptionMessage('Stream customer not found');
 
-        $this->builder->cursor()->willYield([])->shouldBeCalled();
+        $this->builder->cursor()->willReturn(new LazyCollection())->shouldBeCalled();
         $this->eventConverter->toDomainEvent(Argument::type(stdClass::class))->shouldNotBeCalled();
 
         $loader = $this->newLoader();
@@ -122,9 +122,9 @@ final class StreamEventLoaderTest extends TestCaseWithProphecy
                 //
             }
 
-            protected function generateFrom(Builder $builder, StreamName $StreamName): Generator
+            protected function generateFrom(Builder $builder, StreamName $StreamName): Collection|LazyCollection
             {
-                yield from $builder->cursor();
+                return $builder->cursor();
             }
         };
     }

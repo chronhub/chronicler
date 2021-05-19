@@ -10,6 +10,8 @@ use Chronhub\Chronicler\Stream\StreamName;
 use Generator;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Collection;
+use Illuminate\Support\LazyCollection;
 
 abstract class StreamEventLoader
 {
@@ -24,19 +26,16 @@ abstract class StreamEventLoader
         try {
             $streamEvents = $this->generateFrom($builder, $streamName);
 
-            if (null === $streamEvents->current()) {
-                throw StreamNotFound::withStreamName($streamName);
-            }
-
-            // checkMe some issue with whenEmpty from lazy collection
-            // as it duplicate queries
-
             $count = 0;
 
             foreach ($streamEvents as $streamEvent) {
                 yield $this->eventConverter->toDomainEvent($streamEvent);
 
                 $count++;
+            }
+
+            if (0 === $count) {
+                throw StreamNotFound::withStreamName($streamName);
             }
 
             return $count;
@@ -49,5 +48,5 @@ abstract class StreamEventLoader
         }
     }
 
-    abstract protected function generateFrom(Builder $builder, StreamName $StreamName): Generator;
+    abstract protected function generateFrom(Builder $builder, StreamName $StreamName): LazyCollection|Collection;
 }
