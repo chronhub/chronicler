@@ -1,20 +1,21 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tracking\Subscribers;
 
-use Chronhub\Chronicler\Support\Contracts\Chronicler;
-use Chronhub\Chronicler\Support\Contracts\EventableChronicler;
-use Chronhub\Chronicler\Support\Contracts\Tracking\ContextualStream;
-use Chronhub\Foundation\Message\DomainCommand;
 use Chronhub\Foundation\Message\Message;
+use Chronhub\Foundation\Message\DomainCommand;
+use Chronhub\Chronicler\Support\Contracts\Chronicler;
 use Chronhub\Foundation\Support\Contracts\Message\Header;
-use Chronhub\Foundation\Support\Contracts\Message\MessageDecorator;
 use Chronhub\Foundation\Support\Contracts\Reporter\Reporter;
-use Chronhub\Foundation\Support\Contracts\Tracker\ContextualMessage;
-use Chronhub\Foundation\Support\Contracts\Tracker\MessageSubscriber;
+use Chronhub\Chronicler\Support\Contracts\EventableChronicler;
 use Chronhub\Foundation\Support\Contracts\Tracker\MessageTracker;
 use Chronhub\Foundation\Support\Contracts\Tracker\OneTimeListener;
+use Chronhub\Foundation\Support\Contracts\Message\MessageDecorator;
+use Chronhub\Chronicler\Support\Contracts\Tracking\ContextualStream;
+use Chronhub\Foundation\Support\Contracts\Tracker\ContextualMessage;
+use Chronhub\Foundation\Support\Contracts\Tracker\MessageSubscriber;
 
 final class MarkCausationCommand implements MessageSubscriber
 {
@@ -27,12 +28,11 @@ final class MarkCausationCommand implements MessageSubscriber
      */
     public function __construct(private Chronicler $chronicler)
     {
-        //
     }
 
     public function attachToTracker(MessageTracker $tracker): void
     {
-        if (!$this->chronicler instanceof EventableChronicler) {
+        if ( ! $this->chronicler instanceof EventableChronicler) {
             return;
         }
 
@@ -83,7 +83,7 @@ final class MarkCausationCommand implements MessageSubscriber
 
     private function correlationMessageDecorator(DomainCommand $command): MessageDecorator
     {
-        $eventId = (string)$command->header(Header::EVENT_ID);
+        $eventId = (string) $command->header(Header::EVENT_ID);
         $eventType = $command->header(Header::EVENT_TYPE);
 
         return new class($eventId, $eventType) implements MessageDecorator {

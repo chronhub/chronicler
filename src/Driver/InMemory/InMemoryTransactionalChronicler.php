@@ -1,19 +1,20 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Driver\InMemory;
 
-use Chronhub\Chronicler\Exception\StreamAlreadyExists;
-use Chronhub\Chronicler\Exception\StreamNotFound;
-use Chronhub\Chronicler\Exception\TransactionAlreadyStarted;
-use Chronhub\Chronicler\Exception\TransactionNotStarted;
+use Generator;
+use Throwable;
+use Illuminate\Support\Collection;
 use Chronhub\Chronicler\Stream\Stream;
 use Chronhub\Chronicler\Stream\StreamName;
-use Chronhub\Chronicler\Support\Contracts\Model\EventStreamProvider;
+use Chronhub\Chronicler\Exception\StreamNotFound;
+use Chronhub\Chronicler\Exception\StreamAlreadyExists;
+use Chronhub\Chronicler\Exception\TransactionNotStarted;
+use Chronhub\Chronicler\Exception\TransactionAlreadyStarted;
 use Chronhub\Chronicler\Support\Contracts\TransactionalChronicler;
-use Generator;
-use Illuminate\Support\Collection;
-use Throwable;
+use Chronhub\Chronicler\Support\Contracts\Model\EventStreamProvider;
 use function array_merge;
 
 final class InMemoryTransactionalChronicler extends AbstractInMemoryChronicler implements TransactionalChronicler
@@ -36,12 +37,10 @@ final class InMemoryTransactionalChronicler extends AbstractInMemoryChronicler i
         $category = $this->detectStreamCategory($streamName->toString());
 
         if ($this->hasStreamInCache($streamName)) {
-            throw new StreamAlreadyExists(
-                "Stream $streamName already exists but it has never been committed"
-            );
+            throw new StreamAlreadyExists("Stream $streamName already exists but it has never been committed");
         }
 
-        if (!$this->eventStreamProvider->createStream($streamName->toString(), '', $category)) {
+        if ( ! $this->eventStreamProvider->createStream($streamName->toString(), '', $category)) {
             throw StreamAlreadyExists::withStreamName($streamName);
         }
 
@@ -52,7 +51,7 @@ final class InMemoryTransactionalChronicler extends AbstractInMemoryChronicler i
     {
         $streamName = $stream->name();
 
-        if (!$this->hasStream($streamName) && !$this->hasStreamInCache($streamName)) {
+        if ( ! $this->hasStream($streamName) && ! $this->hasStreamInCache($streamName)) {
             throw StreamNotFound::withStreamName($streamName);
         }
 
@@ -79,7 +78,7 @@ final class InMemoryTransactionalChronicler extends AbstractInMemoryChronicler i
 
     public function commitTransaction(): void
     {
-        if (!$this->inTransaction) {
+        if ( ! $this->inTransaction) {
             throw new TransactionNotStarted();
         }
 
@@ -100,7 +99,7 @@ final class InMemoryTransactionalChronicler extends AbstractInMemoryChronicler i
 
     public function rollbackTransaction(): void
     {
-        if (!$this->inTransaction) {
+        if ( ! $this->inTransaction) {
             throw new TransactionNotStarted();
         }
 

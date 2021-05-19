@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Driver\Connection;
 
+use Illuminate\Database\Eloquent\Model;
 use Chronhub\Chronicler\Support\Contracts\Model\EventStreamModel;
 use Chronhub\Chronicler\Support\Contracts\Model\EventStreamProvider;
-use Illuminate\Database\Eloquent\Model;
 
 final class EventStream extends Model implements EventStreamModel, EventStreamProvider
 {
@@ -18,7 +19,7 @@ final class EventStream extends Model implements EventStreamModel, EventStreamPr
         return $this->newInstance([
             'real_stream_name' => $streamName,
             'stream_name'      => $tableName,
-            'category'         => $category
+            'category'         => $category,
         ])->save();
     }
 

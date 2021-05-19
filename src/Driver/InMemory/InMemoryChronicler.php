@@ -1,14 +1,15 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Driver\InMemory;
 
-use Chronhub\Chronicler\Exception\StreamAlreadyExists;
-use Chronhub\Chronicler\Exception\StreamNotFound;
-use Chronhub\Chronicler\Stream\Stream;
-use Chronhub\Foundation\Aggregate\AggregateChanged;
-use Chronhub\Foundation\Support\Contracts\Message\Header;
 use Generator;
+use Chronhub\Chronicler\Stream\Stream;
+use Chronhub\Chronicler\Exception\StreamNotFound;
+use Chronhub\Foundation\Aggregate\AggregateChanged;
+use Chronhub\Chronicler\Exception\StreamAlreadyExists;
+use Chronhub\Foundation\Support\Contracts\Message\Header;
 
 final class InMemoryChronicler extends AbstractInMemoryChronicler
 {
@@ -20,7 +21,7 @@ final class InMemoryChronicler extends AbstractInMemoryChronicler
 
         $category = $this->detectStreamCategory($streamName->toString());
 
-        if (!$this->eventStreamProvider->createStream($streamName->toString(), self::TABLE_NAME, $category)) {
+        if ( ! $this->eventStreamProvider->createStream($streamName->toString(), self::TABLE_NAME, $category)) {
             throw StreamAlreadyExists::withStreamName($streamName);
         }
 
@@ -31,7 +32,7 @@ final class InMemoryChronicler extends AbstractInMemoryChronicler
     {
         $streamName = $stream->name();
 
-        if (!$this->hasStream($streamName)) {
+        if ( ! $this->hasStream($streamName)) {
             throw StreamNotFound::withStreamName($streamName);
         }
 
@@ -42,7 +43,7 @@ final class InMemoryChronicler extends AbstractInMemoryChronicler
     {
         return $this->streams
             ->flatten()
-            ->sortByDesc(fn(AggregateChanged $event) => $event->header(Header::EVENT_TIME))
+            ->sortByDesc(fn (AggregateChanged $event) => $event->header(Header::EVENT_TIME))
             ->toArray();
     }
 

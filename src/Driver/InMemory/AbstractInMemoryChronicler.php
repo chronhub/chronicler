@@ -1,21 +1,22 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Driver\InMemory;
 
-use Chronhub\Chronicler\Exception\InvalidArgumentException;
-use Chronhub\Chronicler\Exception\StreamNotFound;
-use Chronhub\Chronicler\Stream\StreamName;
-use Chronhub\Chronicler\Support\Contracts\InMemoryChronicler;
-use Chronhub\Chronicler\Support\Contracts\Model\EventStreamProvider;
-use Chronhub\Chronicler\Support\Contracts\Query\InMemoryQueryFilter;
-use Chronhub\Chronicler\Support\Contracts\Query\QueryFilter;
-use Chronhub\Chronicler\Support\Traits\DetectStreamCategory;
-use Chronhub\Foundation\Message\DomainEvent;
-use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
-use Chronhub\Foundation\Support\Contracts\Message\Header;
 use Generator;
 use Illuminate\Support\Collection;
+use Chronhub\Chronicler\Stream\StreamName;
+use Chronhub\Foundation\Message\DomainEvent;
+use Chronhub\Chronicler\Exception\StreamNotFound;
+use Chronhub\Foundation\Support\Contracts\Message\Header;
+use Chronhub\Chronicler\Exception\InvalidArgumentException;
+use Chronhub\Chronicler\Support\Contracts\Query\QueryFilter;
+use Chronhub\Chronicler\Support\Traits\DetectStreamCategory;
+use Chronhub\Chronicler\Support\Contracts\InMemoryChronicler;
+use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
+use Chronhub\Chronicler\Support\Contracts\Model\EventStreamProvider;
+use Chronhub\Chronicler\Support\Contracts\Query\InMemoryQueryFilter;
 use function count;
 use function is_string;
 
@@ -36,7 +37,6 @@ abstract class AbstractInMemoryChronicler implements InMemoryChronicler
             public function __construct(private AggregateId $aggregateId,
                                         private string $direction)
             {
-                //
             }
 
             public function orderBy(): string
@@ -63,7 +63,7 @@ abstract class AbstractInMemoryChronicler implements InMemoryChronicler
 
     public function retrieveFiltered(StreamName $streamName, QueryFilter $queryFilter): Generator
     {
-        if (!$queryFilter instanceof InMemoryQueryFilter) {
+        if ( ! $queryFilter instanceof InMemoryQueryFilter) {
             throw new InvalidArgumentException('Query filter must implements ' . InMemoryQueryFilter::class);
         }
 
@@ -72,7 +72,7 @@ abstract class AbstractInMemoryChronicler implements InMemoryChronicler
 
     public function delete(StreamName $streamName): void
     {
-        if (!$this->hasStream($streamName)) {
+        if ( ! $this->hasStream($streamName)) {
             throw StreamNotFound::withStreamName($streamName);
         }
 
@@ -104,14 +104,14 @@ abstract class AbstractInMemoryChronicler implements InMemoryChronicler
     protected function filterEvents(StreamName $streamName,
                                     InMemoryQueryFilter $filter): Generator
     {
-        if (!$this->hasStream($streamName)) {
+        if ( ! $this->hasStream($streamName)) {
             throw StreamNotFound::withStreamName($streamName);
         }
 
         $events = (new Collection($this->streams->get($streamName->toString())))
             ->sortBy(function (DomainEvent $event): int {
                 return $event->header(Header::AGGREGATE_VERSION);
-            }, SORT_NUMERIC, $filter->orderBy() === 'desc')
+            }, SORT_NUMERIC, 'desc' === $filter->orderBy())
             ->filter($filter->filterQuery());
 
         if ($events->isEmpty()) {

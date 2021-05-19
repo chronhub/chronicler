@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Support\Traits;
 
-use Chronhub\Foundation\Reporter\ReportEvent;
 use Generator;
 use Illuminate\Support\Collection;
+use Chronhub\Foundation\Reporter\ReportEvent;
 
 trait RecordStreamEvent
 {

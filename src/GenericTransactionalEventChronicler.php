@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler;
 
-use Chronhub\Chronicler\Support\Contracts\Tracking\TransactionalStreamTracker;
 use Chronhub\Chronicler\Support\Contracts\TransactionalChronicler;
+use Chronhub\Chronicler\Support\Contracts\Tracking\TransactionalStreamTracker;
 
 final class GenericTransactionalEventChronicler extends GenericEventChronicler implements TransactionalChronicler
 {

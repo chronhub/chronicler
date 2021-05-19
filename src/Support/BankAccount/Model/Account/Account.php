@@ -1,12 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Support\BankAccount\Model\Account;
 
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerId;
 use Chronhub\Foundation\Aggregate\HasAggregateRoot;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerId;
 
 final class Account implements AggregateRoot
 {

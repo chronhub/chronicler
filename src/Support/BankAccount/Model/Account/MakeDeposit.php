@@ -1,12 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Support\BankAccount\Model\Account;
 
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerId;
+use RuntimeException;
 use Chronhub\Foundation\Message\DomainCommand;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
-use RuntimeException;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerId;
 
 final class MakeDeposit extends DomainCommand
 {
@@ -15,7 +16,7 @@ final class MakeDeposit extends DomainCommand
         return new self([
             'customer_id' => $customerId,
             'account_id'  => $accountId,
-            'deposit'     => $deposit
+            'deposit'     => $deposit,
         ]);
     }
 
@@ -34,7 +35,7 @@ final class MakeDeposit extends DomainCommand
         $deposit = $this->content['deposit'];
 
         if ($deposit < 1) {
-            throw new RuntimeException("Deposit must be greater than 0");
+            throw new RuntimeException('Deposit must be greater than 0');
         }
 
         return $deposit;

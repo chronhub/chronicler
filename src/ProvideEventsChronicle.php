@@ -1,21 +1,22 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler;
 
-use Chronhub\Chronicler\Exception\ConcurrencyException;
-use Chronhub\Chronicler\Exception\StreamAlreadyExists;
-use Chronhub\Chronicler\Exception\StreamNotFound;
-use Chronhub\Chronicler\Exception\TransactionAlreadyStarted;
-use Chronhub\Chronicler\Exception\TransactionNotStarted;
 use Chronhub\Chronicler\Stream\Stream;
+use Chronhub\Chronicler\Exception\StreamNotFound;
 use Chronhub\Chronicler\Support\Contracts\Chronicler;
+use Chronhub\Chronicler\Exception\StreamAlreadyExists;
+use Chronhub\Chronicler\Exception\ConcurrencyException;
+use Chronhub\Chronicler\Exception\TransactionNotStarted;
+use Chronhub\Chronicler\Exception\TransactionAlreadyStarted;
 use Chronhub\Chronicler\Support\Contracts\EventableChronicler;
-use Chronhub\Chronicler\Support\Contracts\Tracking\ContextualStream;
 use Chronhub\Chronicler\Support\Contracts\Tracking\StreamTracker;
-use Chronhub\Chronicler\Support\Contracts\Tracking\TransactionalContextualStream;
-use Chronhub\Chronicler\Support\Contracts\Tracking\TransactionalStreamTracker;
 use Chronhub\Chronicler\Support\Contracts\TransactionalChronicler;
+use Chronhub\Chronicler\Support\Contracts\Tracking\ContextualStream;
+use Chronhub\Chronicler\Support\Contracts\Tracking\TransactionalStreamTracker;
+use Chronhub\Chronicler\Support\Contracts\Tracking\TransactionalContextualStream;
 
 final class ProvideEventsChronicle
 {

@@ -1,16 +1,17 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Aggregate;
 
+use Chronhub\Chronicler\Support\Contracts\Chronicler;
+use Chronhub\Chronicler\Support\Contracts\StreamProducer;
+use Chronhub\Chronicler\Support\Contracts\ReadOnlyChronicler;
+use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
+use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateType;
+use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
 use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
 use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateRepository;
-use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateType;
-use Chronhub\Chronicler\Support\Contracts\Chronicler;
-use Chronhub\Chronicler\Support\Contracts\ReadOnlyChronicler;
-use Chronhub\Chronicler\Support\Contracts\StreamProducer;
-use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
-use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
 use function reset;
 
 final class GenericAggregateRepository implements AggregateRepository
@@ -23,7 +24,6 @@ final class GenericAggregateRepository implements AggregateRepository
                                 protected AggregateCache $aggregateCache,
                                 protected AggregateEventReleaser $eventsReleaser)
     {
-        //
     }
 
     public function retrieve(AggregateId $aggregateId): ?AggregateRoot
@@ -47,7 +47,7 @@ final class GenericAggregateRepository implements AggregateRepository
 
         $events = $this->eventsReleaser->releaseEvents($aggregateRoot);
 
-        if (!$firstEvent = reset($events)) {
+        if ( ! $firstEvent = reset($events)) {
             return;
         }
 

@@ -1,17 +1,18 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Aggregate;
 
-use Chronhub\Chronicler\Exception\StreamNotFound;
-use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateType;
-use Chronhub\Chronicler\Support\Contracts\Chronicler;
-use Chronhub\Chronicler\Support\Contracts\Query\QueryFilter;
-use Chronhub\Chronicler\Support\Contracts\StreamProducer;
-use Chronhub\Foundation\Message\DomainEvent;
-use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
-use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
 use Generator;
+use Chronhub\Foundation\Message\DomainEvent;
+use Chronhub\Chronicler\Exception\StreamNotFound;
+use Chronhub\Chronicler\Support\Contracts\Chronicler;
+use Chronhub\Chronicler\Support\Contracts\StreamProducer;
+use Chronhub\Chronicler\Support\Contracts\Query\QueryFilter;
+use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
+use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateType;
+use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
 
 trait HasReconstituteAggregate
 {
@@ -24,7 +25,7 @@ trait HasReconstituteAggregate
         try {
             $history = $this->fromHistory($aggregateId, null);
 
-            if(!$history->valid()){
+            if ( ! $history->valid()) {
                 return null;
             }
 
@@ -38,8 +39,6 @@ trait HasReconstituteAggregate
     }
 
     /**
-     * @param AggregateId      $aggregateId
-     * @param QueryFilter|null $queryFilter
      * @return Generator<DomainEvent>
      */
     protected function fromHistory(AggregateId $aggregateId, ?QueryFilter $queryFilter): Generator

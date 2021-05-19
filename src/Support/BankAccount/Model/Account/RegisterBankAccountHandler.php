@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Support\BankAccount\Model\Account;
 
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerCollection;
 use RuntimeException;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerCollection;
 
 final class RegisterBankAccountHandler
 {
@@ -17,7 +18,7 @@ final class RegisterBankAccountHandler
     {
         $customerId = $command->customerId();
 
-        if (!$this->customerCollection->get($customerId)) {
+        if ( ! $this->customerCollection->get($customerId)) {
             throw new RuntimeException('Customer not found');
         }
 

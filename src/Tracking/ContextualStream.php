@@ -1,22 +1,23 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tracking;
 
+use Chronhub\Chronicler\Stream\Stream;
+use Illuminate\Support\LazyCollection;
+use Chronhub\Foundation\Message\Message;
+use Chronhub\Chronicler\Stream\StreamName;
+use Chronhub\Foundation\Message\DomainEvent;
+use Chronhub\Chronicler\Exception\StreamNotFound;
+use Chronhub\Foundation\Tracker\HasTrackerContext;
+use Chronhub\Chronicler\Exception\StreamAlreadyExists;
 use Chronhub\Chronicler\Exception\ConcurrencyException;
 use Chronhub\Chronicler\Exception\InvalidArgumentException;
-use Chronhub\Chronicler\Exception\StreamAlreadyExists;
-use Chronhub\Chronicler\Exception\StreamNotFound;
-use Chronhub\Chronicler\Stream\Stream;
-use Chronhub\Chronicler\Stream\StreamName;
 use Chronhub\Chronicler\Support\Contracts\Query\QueryFilter;
-use Chronhub\Chronicler\Support\Contracts\Tracking\ContextualStream as Context;
-use Chronhub\Foundation\Message\DomainEvent;
-use Chronhub\Foundation\Message\Message;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Foundation\Support\Contracts\Message\MessageDecorator;
-use Chronhub\Foundation\Tracker\HasTrackerContext;
-use Illuminate\Support\LazyCollection;
+use Chronhub\Chronicler\Support\Contracts\Tracking\ContextualStream as Context;
 
 class ContextualStream implements Context
 {
@@ -63,10 +64,8 @@ class ContextualStream implements Context
 
     public function withDirection(string $direction): void
     {
-        if (!in_array($direction, ['asc', 'desc'])) {
-            throw new InvalidArgumentException(
-                "Invalid Order by direction, allowed asc/desc, current is $direction"
-            );
+        if ( ! in_array($direction, ['asc', 'desc'])) {
+            throw new InvalidArgumentException("Invalid Order by direction, allowed asc/desc, current is $direction");
         }
 
         $this->direction = $direction;

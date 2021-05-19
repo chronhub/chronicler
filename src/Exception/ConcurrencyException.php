@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Exception;
@@ -18,7 +19,7 @@ class ConcurrencyException extends RuntimeException
     {
         $errorInfo = $exception->errorInfo;
 
-        $message = "Events or Aggregates ids have already been used in the same stream";
+        $message = 'Events or Aggregates ids have already been used in the same stream';
         $message .= sprintf("Error %s. \nError-Info: %s", $errorInfo[0], $errorInfo[2]);
 
         return new self($message);

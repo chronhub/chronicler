@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Driver\Connection\WriteLock;
 
-use Chronhub\Chronicler\Support\Contracts\WriteLockStrategy;
 use Illuminate\Database\ConnectionInterface;
+use Chronhub\Chronicler\Support\Contracts\WriteLockStrategy;
 
 final class PgsqlWriteLock implements WriteLockStrategy
 {

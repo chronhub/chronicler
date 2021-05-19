@@ -1,12 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Driver\InMemory;
 
-use Chronhub\Chronicler\Support\Contracts\Model\EventStreamProvider;
 use Illuminate\Support\Collection;
-use function in_array;
+use Chronhub\Chronicler\Support\Contracts\Model\EventStreamProvider;
 use function is_null;
+use function in_array;
 use function is_string;
 
 final class InMemoryEventStream implements EventStreamProvider
@@ -20,7 +21,7 @@ final class InMemoryEventStream implements EventStreamProvider
 
     public function createStream(string $streamName, string $tableName, ?string $category = null): bool
     {
-        if (!$this->hasEventStream($streamName)) {
+        if ( ! $this->hasEventStream($streamName)) {
             $this->eventStreams->put($streamName, $category);
 
             return true;
@@ -31,7 +32,7 @@ final class InMemoryEventStream implements EventStreamProvider
 
     public function deleteStream(string $streamName): bool
     {
-        if (!$this->hasEventStream($streamName)) {
+        if ( ! $this->hasEventStream($streamName)) {
             return false;
         }
 
@@ -43,21 +44,21 @@ final class InMemoryEventStream implements EventStreamProvider
     public function filterByStreams(array $streamNames): array
     {
         return $this->eventStreams->filter(
-            fn(?string $category, string $streamName) => is_null($category) && in_array($streamName, $streamNames)
+            fn (?string $category, string $streamName) => is_null($category) && in_array($streamName, $streamNames)
         )->keys()->toArray();
     }
 
     public function filterByCategories(array $categoryNames): array
     {
         return $this->eventStreams->filter(
-            fn(?string $category) => is_string($category) && in_array($category, $categoryNames)
+            fn (?string $category) => is_string($category) && in_array($category, $categoryNames)
         )->keys()->toArray();
     }
 
     public function allStreamWithoutInternal(): array
     {
         return $this->eventStreams->filter(
-            fn(?string $category, string $streamName) => is_null($category)
+            fn (?string $category, string $streamName) => is_null($category)
         )->keys()->toArray();
     }
 

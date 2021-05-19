@@ -1,14 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Chronhub\Chronicler\Support\Contracts\Tracking;
 
-use Chronhub\Chronicler\Support\Contracts\EventableChronicler;
 use Chronhub\Foundation\Support\Contracts\Tracker\Subscriber;
+use Chronhub\Chronicler\Support\Contracts\EventableChronicler;
 
 interface StreamSubscriber extends Subscriber
 {
-    /**
-     * @param EventableChronicler $chronicler
-     */
     public function attachToChronicler(EventableChronicler $chronicler): void;
 }

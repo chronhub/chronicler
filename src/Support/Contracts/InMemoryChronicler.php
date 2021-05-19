@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Chronhub\Chronicler\Support\Contracts;
 
+use Chronhub\Foundation\Message\DomainEvent;
 use Chronhub\Chronicler\Tracking\Subscribers\PublishEvents;
 use Chronhub\Chronicler\Tracking\Subscribers\PublishTransactionalInMemoryEvents;
-use Chronhub\Foundation\Message\DomainEvent;
 
 interface InMemoryChronicler extends Chronicler
 {
     /**
-     * Pull recorded streams
+     * Pull recorded streams.
      *
      * it must only been called for standalone in memory event store
      *
@@ -20,9 +22,9 @@ interface InMemoryChronicler extends Chronicler
      * dev would use a stream subscriber
      *
      * @return array<DomainEvent>
+     *
      * @see PublishTransactionalInMemoryEvents
      * @see PublishEvents
-     *
      */
     public function pullCachedRecordedEvents(): array;
 }

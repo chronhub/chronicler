@@ -1,20 +1,20 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tracking\Subscribers;
 
 use Chronhub\Chronicler\Support\Contracts\Chronicler;
-use Chronhub\Chronicler\Support\Contracts\TransactionalChronicler;
 use Chronhub\Foundation\Support\Contracts\Reporter\Reporter;
+use Chronhub\Foundation\Support\Contracts\Tracker\MessageTracker;
+use Chronhub\Chronicler\Support\Contracts\TransactionalChronicler;
 use Chronhub\Foundation\Support\Contracts\Tracker\ContextualMessage;
 use Chronhub\Foundation\Support\Contracts\Tracker\MessageSubscriber;
-use Chronhub\Foundation\Support\Contracts\Tracker\MessageTracker;
 
 final class TransactionalHandlerSubscriber implements MessageSubscriber
 {
     public function __construct(private Chronicler $chronicler)
     {
-        //
     }
 
     public function attachToTracker(MessageTracker $tracker): void

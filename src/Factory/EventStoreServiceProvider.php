@@ -1,15 +1,16 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Factory;
 
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Foundation\Application;
+use Chronhub\Chronicler\Support\Facade\Chronicle;
+use Illuminate\Contracts\Support\DeferrableProvider;
+use Chronhub\Chronicler\Support\Contracts\Support\JsonEncoder;
 use Chronhub\Chronicler\Support\Contracts\Factory\ChroniclerManager;
 use Chronhub\Chronicler\Support\Contracts\Factory\RepositoryManager;
-use Chronhub\Chronicler\Support\Contracts\Support\JsonEncoder;
-use Chronhub\Chronicler\Support\Facade\Chronicle;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Support\DeferrableProvider;
-use Illuminate\Support\ServiceProvider;
 
 final class EventStoreServiceProvider extends ServiceProvider implements DeferrableProvider
 {

@@ -1,17 +1,18 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler;
 
-use Chronhub\Chronicler\Driver\Connection\AbstractChroniclerConnection;
-use Chronhub\Chronicler\Exception\ConcurrencyException;
+use Chronhub\Chronicler\Stream\Stream;
+use Illuminate\Database\QueryException;
+use Chronhub\Chronicler\Stream\StreamName;
 use Chronhub\Chronicler\Exception\QueryFailure;
 use Chronhub\Chronicler\Exception\StreamNotFound;
-use Chronhub\Chronicler\Stream\Stream;
-use Chronhub\Chronicler\Stream\StreamName;
-use Chronhub\Chronicler\Support\Contracts\TransactionalChronicler;
+use Chronhub\Chronicler\Exception\ConcurrencyException;
 use Chronhub\Chronicler\Support\Traits\HasConnectionTransaction;
-use Illuminate\Database\QueryException;
+use Chronhub\Chronicler\Support\Contracts\TransactionalChronicler;
+use Chronhub\Chronicler\Driver\Connection\AbstractChroniclerConnection;
 
 final class PgsqlChronicler extends AbstractChroniclerConnection implements TransactionalChronicler
 {
@@ -42,7 +43,7 @@ final class PgsqlChronicler extends AbstractChroniclerConnection implements Tran
 
         $tableName = $this->persistenceStrategy->tableName($streamName);
 
-        if (!$this->writeLockStrategy->acquireLock($tableName)) {
+        if ( ! $this->writeLockStrategy->acquireLock($tableName)) {
             throw ConcurrencyException::failedToAcquireLock();
         }
 
@@ -52,9 +53,7 @@ final class PgsqlChronicler extends AbstractChroniclerConnection implements Tran
                 ->insert($this->serializeStreamEvents($streamEvents));
         } catch (QueryException $queryException) {
             match ($queryException->getCode()) {
-                '42P01' => throw StreamNotFound::withStreamName($streamName),
-                '23000', '23505' => throw ConcurrencyException::fromUnlockStreamFailure($queryException),
-                default => throw QueryFailure::fromQueryException($queryException)
+                '42P01' => throw StreamNotFound::withStreamName($streamName), '23000', '23505' => throw ConcurrencyException::fromUnlockStreamFailure($queryException), default => throw QueryFailure::fromQueryException($queryException)
             };
         }
 
@@ -66,11 +65,11 @@ final class PgsqlChronicler extends AbstractChroniclerConnection implements Tran
         try {
             $result = $this->eventStreamProvider->deleteStream($streamName->toString());
 
-            if (!$result) {
+            if ( ! $result) {
                 throw StreamNotFound::withStreamName($streamName);
             }
         } catch (QueryException $exception) {
-            if ($exception->getCode() !== '00000') {
+            if ('00000' !== $exception->getCode()) {
                 throw QueryFailure::fromQueryException($exception);
             }
         }
@@ -80,7 +79,7 @@ final class PgsqlChronicler extends AbstractChroniclerConnection implements Tran
         try {
             $this->connection->getSchemaBuilder()->drop($tableName);
         } catch (QueryException $exception) {
-            if ($exception->getCode() !== '00000') {
+            if ('00000' !== $exception->getCode()) {
                 throw QueryFailure::fromQueryException($exception);
             }
         }

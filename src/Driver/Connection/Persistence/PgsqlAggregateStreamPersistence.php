@@ -1,13 +1,14 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Driver\Connection\Persistence;
 
-use Chronhub\Chronicler\Driver\Connection\EventConverter;
-use Chronhub\Chronicler\Stream\StreamName;
-use Chronhub\Chronicler\Support\Contracts\StreamPersistence;
-use Chronhub\Foundation\Message\DomainEvent;
 use Illuminate\Support\Facades\DB;
+use Chronhub\Chronicler\Stream\StreamName;
+use Chronhub\Foundation\Message\DomainEvent;
+use Chronhub\Chronicler\Driver\Connection\EventConverter;
+use Chronhub\Chronicler\Support\Contracts\StreamPersistence;
 
 final class PgsqlAggregateStreamPersistence implements StreamPersistence
 {

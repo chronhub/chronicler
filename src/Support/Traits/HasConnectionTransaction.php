@@ -1,13 +1,14 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Support\Traits;
 
-use Chronhub\Chronicler\Exception\TransactionAlreadyStarted;
-use Chronhub\Chronicler\Exception\TransactionNotStarted;
+use Throwable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\ConnectionInterface;
-use Throwable;
+use Chronhub\Chronicler\Exception\TransactionNotStarted;
+use Chronhub\Chronicler\Exception\TransactionAlreadyStarted;
 
 trait HasConnectionTransaction
 {

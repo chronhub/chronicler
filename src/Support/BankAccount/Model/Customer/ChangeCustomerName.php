@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Support\BankAccount\Model\Customer;
@@ -12,7 +13,7 @@ final class ChangeCustomerName extends DomainCommand
     {
         return new self([
             'customer_id'=> $customerId,
-            'new_customer_name'=> $newCustomerName
+            'new_customer_name'=> $newCustomerName,
         ]);
     }
 

@@ -1,12 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Aggregate;
 
-use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
+use Illuminate\Contracts\Cache\Store;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
-use Illuminate\Contracts\Cache\Store;
+use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
 
 final class GenericAggregateCache implements AggregateCache
 {
@@ -14,7 +15,6 @@ final class GenericAggregateCache implements AggregateCache
 
     public function __construct(private Store $store, private int $limit = 10000)
     {
-        //
     }
 
     public function put(AggregateRoot $aggregateRoot): void
@@ -25,8 +25,8 @@ final class GenericAggregateCache implements AggregateCache
 
         $aggregateId = $aggregateRoot->aggregateId();
 
-        if (!$this->has($aggregateId)) {
-            $this->count++;
+        if ( ! $this->has($aggregateId)) {
+            ++$this->count;
         }
 
         $cacheKey = $this->determineCacheKey($aggregateId);
@@ -47,7 +47,7 @@ final class GenericAggregateCache implements AggregateCache
             $cacheKey = $this->determineCacheKey($aggregateId);
 
             if ($this->store->forget($cacheKey)) {
-                $this->count--;
+                --$this->count;
             }
         }
     }

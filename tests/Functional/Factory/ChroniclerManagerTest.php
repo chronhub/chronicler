@@ -190,7 +190,7 @@ final class ChroniclerManagerTest extends TestCaseWithOrchestra
     {
         // set tracker eventable decorator
         //$this->app['config']->set('chronicler.')
-
+        $this->markTestIncomplete('todo');
 
         $this->app['config']->set('chronicler.connections', [
             'my_in_memory' => [

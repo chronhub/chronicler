@@ -1,11 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Chronhub\Chronicler\Support\Contracts;
 
 interface ChroniclerDecorator extends Chronicler
 {
-    /**
-     * @return Chronicler
-     */
     public function innerChronicler(): Chronicler;
 }

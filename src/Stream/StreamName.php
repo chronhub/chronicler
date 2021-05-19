@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Stream;
@@ -13,7 +14,7 @@ final class StreamName
     {
         $name = trim($name);
 
-        if ($name === "") {
+        if ('' === $name) {
             throw new InvalidArgumentException('Invalid stream name');
         }
 

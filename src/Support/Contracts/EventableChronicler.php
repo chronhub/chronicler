@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Chronhub\Chronicler\Support\Contracts;
 
 use Chronhub\Foundation\Support\Contracts\Tracker\Listener;
@@ -17,20 +19,8 @@ interface EventableChronicler extends ChroniclerDecorator
     public const FETCH_CATEGORY_NAMES = 'fetch_category_names_event';
     public const HAS_STREAM_EVENT = 'has_stream_event';
 
-    /**
-     * @param string   $eventName
-     * @param callable $eventContext
-     * @param int      $priority
-     * @return Listener
-     */
     public function subscribe(string $eventName, callable $eventContext, int $priority = 0): Listener;
 
-    /**
-     * @param string   $eventName
-     * @param callable $eventContext
-     * @param int      $priority
-     * @return OneTimeListener
-     */
     public function subscribeOnce(string $eventName, callable $eventContext, int $priority = 0): OneTimeListener;
 
     /**

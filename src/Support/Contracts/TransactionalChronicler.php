@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Chronhub\Chronicler\Support\Contracts;
 
 use Throwable;
@@ -25,14 +27,9 @@ interface TransactionalChronicler extends Chronicler
      */
     public function rollbackTransaction(): void;
 
-    /**
-     * @return bool
-     */
     public function inTransaction(): bool;
 
     /**
-     * @param callable $callback
-     * @return mixed
      * @throws Throwable
      */
     public function transactional(callable $callback): mixed;

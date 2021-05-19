@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Support\BankAccount\Model\Customer;
@@ -9,7 +10,6 @@ final class CustomerName implements Value
 {
     private function __construct(private string $name)
     {
-        //
     }
 
     public static function fromString(string $name): self

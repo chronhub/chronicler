@@ -1,36 +1,37 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Factory;
 
-use Chronhub\Chronicler\Aggregate\AggregateEventReleaser;
-use Chronhub\Chronicler\Aggregate\GenericAggregateCache;
-use Chronhub\Chronicler\Aggregate\GenericAggregateRepository;
-use Chronhub\Chronicler\Aggregate\GenericAggregateType;
-use Chronhub\Chronicler\Exception\RuntimeException;
-use Chronhub\Chronicler\Stream\StreamName;
-use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
-use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateRepository;
-use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateType;
-use Chronhub\Chronicler\Support\Contracts\Factory\ChroniclerManager;
-use Chronhub\Chronicler\Support\Contracts\Factory\RepositoryManager;
-use Chronhub\Chronicler\Support\Contracts\StreamProducer;
-use Chronhub\Foundation\Message\Decorator\ChainDecorators;
-use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
-use Chronhub\Foundation\Support\Contracts\Message\MessageDecorator;
-use Illuminate\Contracts\Cache\Factory;
+use Illuminate\Support\Arr;
 use Illuminate\Contracts\Cache\Store;
+use Illuminate\Contracts\Cache\Factory;
+use Chronhub\Chronicler\Stream\StreamName;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Support\Arr;
+use Chronhub\Chronicler\Exception\RuntimeException;
+use Chronhub\Chronicler\Aggregate\GenericAggregateType;
+use Chronhub\Chronicler\Aggregate\GenericAggregateCache;
+use Chronhub\Chronicler\Aggregate\AggregateEventReleaser;
+use Chronhub\Chronicler\Support\Contracts\StreamProducer;
+use Chronhub\Foundation\Message\Decorator\ChainDecorators;
+use Chronhub\Chronicler\Aggregate\GenericAggregateRepository;
+use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateType;
+use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
+use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
+use Chronhub\Foundation\Support\Contracts\Message\MessageDecorator;
+use Chronhub\Chronicler\Support\Contracts\Factory\ChroniclerManager;
+use Chronhub\Chronicler\Support\Contracts\Factory\RepositoryManager;
+use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateRepository;
 use function is_array;
 use function is_string;
 
 final class DefaultRepositoryManager implements RepositoryManager
 {
-    protected array $repositories = [];
-    protected array $customRepositories = [];
-    protected array $config;
+    private array $repositories = [];
+    private array $customRepositories = [];
+    private array $config;
 
     public function __construct(private Application $app, private ChroniclerManager $chroniclerManager)
     {
@@ -45,7 +46,7 @@ final class DefaultRepositoryManager implements RepositoryManager
 
         $config = $this->fromChronicler("repositories.$streamName");
 
-        if (!is_array($config) || empty($config)) {
+        if ( ! is_array($config) || empty($config)) {
             throw new RuntimeException("Invalid repository config for stream name $streamName");
         }
 
@@ -67,7 +68,7 @@ final class DefaultRepositoryManager implements RepositoryManager
             $aggregateRepository = GenericAggregateRepository::class;
         }
 
-        if (!class_exists($aggregateRepository)) {
+        if ( ! class_exists($aggregateRepository)) {
             throw new RuntimeException("Invalid aggregate repository class $aggregateRepository");
         }
 
@@ -100,7 +101,7 @@ final class DefaultRepositoryManager implements RepositoryManager
     {
         $connection = $this->fromChronicler('connections.' . $config['chronicler']);
 
-        if ($connection === 'default') {
+        if ('default' === $connection) {
             $connection = $this->fromChronicler('connections.default');
         }
 
@@ -108,14 +109,14 @@ final class DefaultRepositoryManager implements RepositoryManager
             ? $connection['strategy']
             : $this->fromChronicler("connections.$connection.strategy");
 
-        if ($strategy === 'default') {
-            $strategy = $this->fromChronicler("strategy.default") ?? null;
+        if ('default' === $strategy) {
+            $strategy = $this->fromChronicler('strategy.default') ?? null;
         }
 
         $streamProducer = $this->fromChronicler("strategy.$strategy.producer");
 
-        if (!is_string($streamProducer)) {
-            throw new RuntimeException("Unable to determine stream producer strategy");
+        if ( ! is_string($streamProducer)) {
+            throw new RuntimeException('Unable to determine stream producer strategy');
         }
 
         return new $streamProducer(new StreamName($streamName));
@@ -141,10 +142,10 @@ final class DefaultRepositoryManager implements RepositoryManager
         }
 
         $eventDecorators = array_map(
-            fn(string $decorator) => $this->app->make($decorator),
+            fn (string $decorator) => $this->app->make($decorator),
             array_merge(
                 $messageDecorators,
-                $this->fromChronicler("event_decorators") ?? [],
+                $this->fromChronicler('event_decorators') ?? [],
                 $this->fromChronicler("repositories.$streamName.event_decorators") ?? []
             )
         );

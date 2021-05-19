@@ -23,7 +23,8 @@
         "phpspec/prophecy-phpunit": "dev-master",
         "phpstan/phpstan": "0.12.x-dev",
         "phpunit/phpunit": "^9.4",
-        "roave/security-advisories": "dev-master"
+        "roave/security-advisories": "dev-master",
+        "friendsofphp/php-cs-fixer": "^2.18.4"
     },
     "autoload": {
         "psr-4": {

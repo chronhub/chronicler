@@ -1,17 +1,18 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Driver\Connection\Loader;
 
-use Chronhub\Chronicler\Driver\Connection\EventConverter;
+use Generator;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\LazyCollection;
+use Illuminate\Database\QueryException;
+use Chronhub\Chronicler\Stream\StreamName;
 use Chronhub\Chronicler\Exception\QueryFailure;
 use Chronhub\Chronicler\Exception\StreamNotFound;
-use Chronhub\Chronicler\Stream\StreamName;
-use Generator;
-use Illuminate\Database\Query\Builder;
-use Illuminate\Database\QueryException;
-use Illuminate\Support\Collection;
-use Illuminate\Support\LazyCollection;
+use Chronhub\Chronicler\Driver\Connection\EventConverter;
 
 abstract class StreamEventLoader
 {
@@ -31,7 +32,7 @@ abstract class StreamEventLoader
             foreach ($streamEvents as $streamEvent) {
                 yield $this->eventConverter->toDomainEvent($streamEvent);
 
-                $count++;
+                ++$count;
             }
 
             if (0 === $count) {

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Factory;
@@ -9,6 +10,6 @@ final class ChroniclerServiceProvider extends AggregateServiceProvider
 {
     protected $providers = [
         ConfigurationServiceProvider::class,
-        EventStoreServiceProvider::class
+        EventStoreServiceProvider::class,
     ];
 }

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Support\BankAccount\Model\Customer;
@@ -10,9 +11,9 @@ final class CustomerNameChanged extends AggregateChanged
 {
     public static function forCustomer(CustomerId $customerId, CustomerName $newName, CustomerName $oldName): self
     {
-        return self::occur($customerId->toString(),[
+        return self::occur($customerId->toString(), [
             'new_name' => $newName->toString(),
-            'old_name' => $oldName->toString()
+            'old_name' => $oldName->toString(),
         ]);
     }
 
@@ -31,4 +32,3 @@ final class CustomerNameChanged extends AggregateChanged
         return CustomerName::fromString($this->content['old_name']);
     }
 }
-

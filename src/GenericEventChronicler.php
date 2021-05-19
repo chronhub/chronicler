@@ -1,18 +1,19 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler;
 
+use Generator;
 use Chronhub\Chronicler\Stream\Stream;
 use Chronhub\Chronicler\Stream\StreamName;
 use Chronhub\Chronicler\Support\Contracts\Chronicler;
-use Chronhub\Chronicler\Support\Contracts\EventableChronicler;
-use Chronhub\Chronicler\Support\Contracts\Query\QueryFilter;
-use Chronhub\Chronicler\Support\Contracts\Tracking\StreamTracker;
-use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Foundation\Support\Contracts\Tracker\Listener;
+use Chronhub\Chronicler\Support\Contracts\Query\QueryFilter;
+use Chronhub\Chronicler\Support\Contracts\EventableChronicler;
+use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
+use Chronhub\Chronicler\Support\Contracts\Tracking\StreamTracker;
 use Chronhub\Foundation\Support\Contracts\Tracker\OneTimeListener;
-use Generator;
 
 class GenericEventChronicler implements EventableChronicler
 {
@@ -62,7 +63,7 @@ class GenericEventChronicler implements EventableChronicler
 
     public function retrieveAll(StreamName $streamName, AggregateId $aggregateId, string $direction = 'asc'): Generator
     {
-        $event = $direction === 'asc' ? self::ALL_STREAM_EVENT : self::ALL_REVERSED_STREAM_EVENT;
+        $event = 'asc' === $direction ? self::ALL_STREAM_EVENT : self::ALL_REVERSED_STREAM_EVENT;
 
         $context = $this->tracker->newContext($event);
 

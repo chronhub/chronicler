@@ -1,41 +1,42 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Factory;
 
-use Chronhub\Chronicler\Driver\Connection\Loader\LazyQueryLoader;
-use Chronhub\Chronicler\Driver\Connection\Loader\StreamEventLoader;
-use Chronhub\Chronicler\Driver\Connection\WriteLock\NoWriteLock;
-use Chronhub\Chronicler\Driver\Connection\WriteLock\PgsqlWriteLock;
-use Chronhub\Chronicler\Driver\InMemory\InMemoryChronicler;
-use Chronhub\Chronicler\Driver\InMemory\InMemoryTransactionalChronicler;
-use Chronhub\Chronicler\Exception\InvalidArgumentException;
-use Chronhub\Chronicler\Exception\RuntimeException;
-use Chronhub\Chronicler\GenericEventChronicler;
-use Chronhub\Chronicler\GenericTransactionalEventChronicler;
-use Chronhub\Chronicler\PgsqlChronicler;
-use Chronhub\Chronicler\Support\Contracts\Chronicler;
-use Chronhub\Chronicler\Support\Contracts\EventableChronicler;
-use Chronhub\Chronicler\Support\Contracts\Factory\ChroniclerManager;
-use Chronhub\Chronicler\Support\Contracts\Model\EventStreamProvider;
-use Chronhub\Chronicler\Support\Contracts\StreamPersistence;
-use Chronhub\Chronicler\Support\Contracts\Tracking\StreamTracker;
-use Chronhub\Chronicler\Support\Contracts\Tracking\TransactionalStreamTracker;
-use Chronhub\Chronicler\Support\Contracts\TransactionalChronicler;
-use Chronhub\Chronicler\Support\Contracts\WriteLockStrategy;
-use Illuminate\Contracts\Config\Repository;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Database\Connection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Illuminate\Database\Connection;
+use Chronhub\Chronicler\PgsqlChronicler;
+use Illuminate\Contracts\Config\Repository;
+use Chronhub\Chronicler\GenericEventChronicler;
+use Illuminate\Contracts\Foundation\Application;
+use Chronhub\Chronicler\Exception\RuntimeException;
+use Chronhub\Chronicler\Support\Contracts\Chronicler;
+use Chronhub\Chronicler\Driver\InMemory\InMemoryChronicler;
+use Chronhub\Chronicler\Exception\InvalidArgumentException;
+use Chronhub\Chronicler\GenericTransactionalEventChronicler;
+use Chronhub\Chronicler\Support\Contracts\StreamPersistence;
+use Chronhub\Chronicler\Support\Contracts\WriteLockStrategy;
+use Chronhub\Chronicler\Support\Contracts\EventableChronicler;
+use Chronhub\Chronicler\Driver\Connection\WriteLock\NoWriteLock;
+use Chronhub\Chronicler\Driver\Connection\Loader\LazyQueryLoader;
+use Chronhub\Chronicler\Support\Contracts\Tracking\StreamTracker;
+use Chronhub\Chronicler\Support\Contracts\TransactionalChronicler;
+use Chronhub\Chronicler\Driver\Connection\Loader\StreamEventLoader;
+use Chronhub\Chronicler\Driver\Connection\WriteLock\PgsqlWriteLock;
+use Chronhub\Chronicler\Support\Contracts\Factory\ChroniclerManager;
+use Chronhub\Chronicler\Support\Contracts\Model\EventStreamProvider;
+use Chronhub\Chronicler\Driver\InMemory\InMemoryTransactionalChronicler;
+use Chronhub\Chronicler\Support\Contracts\Tracking\TransactionalStreamTracker;
 use function is_array;
 use function is_string;
 
 final class DefaultChroniclerManager implements ChroniclerManager
 {
-    protected array $customChroniclers = [];
-    protected array $chroniclers = [];
-    protected array $config;
+    private array $customChroniclers = [];
+    private array $chroniclers = [];
+    private array $config;
 
     public function __construct(private Application $app)
     {
@@ -44,12 +45,12 @@ final class DefaultChroniclerManager implements ChroniclerManager
 
     public function create(string $name = 'default'): Chronicler
     {
-        if ($name === 'default') {
+        if ('default' === $name) {
             $name = $this->fromChronicler('connections.default');
         }
 
-        if (!is_string($name) || $name === "") {
-            throw new InvalidArgumentException("Invalid chronicler name");
+        if ( ! is_string($name) || '' === $name) {
+            throw new InvalidArgumentException('Invalid chronicler name');
         }
 
         if ($chronicler = $this->chroniclers[$name] ?? null) {
@@ -72,7 +73,7 @@ final class DefaultChroniclerManager implements ChroniclerManager
 
         $config = $this->fromChronicler("connections.$name");
 
-        if (!is_array($config)) {
+        if ( ! is_array($config)) {
             throw new RuntimeException("Chronicle store connection $name not found");
         }
 
@@ -91,17 +92,15 @@ final class DefaultChroniclerManager implements ChroniclerManager
 
         $method = 'create' . Str::studly($driver . 'Driver');
 
-        /** @covers createInMemoryDriver */
-        /** @covers createPgsqlDriver */
-        if (!method_exists($this, $method)) {
-            throw new RuntimeException(
-                "Unable to resolve chronicle store with name $name and driver $driver"
-            );
+        /* @covers createInMemoryDriver */
+        /* @covers createPgsqlDriver */
+        if ( ! method_exists($this, $method)) {
+            throw new RuntimeException("Unable to resolve chronicle store with name $name and driver $driver");
         }
 
         $chronicler = $this->$method($config);
 
-        if ($driver === 'in_memory') {
+        if ('in_memory' === $driver) {
             return $chronicler;
         }
 
@@ -118,8 +117,8 @@ final class DefaultChroniclerManager implements ChroniclerManager
 
         $tracker = $this->determineTracker($config);
 
-        if (!$tracker instanceof StreamTracker) {
-            throw new RuntimeException("Use of event chronicler decorator require a valid tracker id");
+        if ( ! $tracker instanceof StreamTracker) {
+            throw new RuntimeException('Use of event chronicler decorator require a valid tracker id');
         }
 
         if ($chronicler instanceof TransactionalChronicler && $tracker instanceof TransactionalStreamTracker) {
@@ -130,7 +129,7 @@ final class DefaultChroniclerManager implements ChroniclerManager
             return new GenericEventChronicler($chronicler, $tracker);
         }
 
-        throw new RuntimeException("Unable to configure chronicler event decorator");
+        throw new RuntimeException('Unable to configure chronicler event decorator');
     }
 
     private function createPgsqlDriver(array $config): Chronicler
@@ -156,7 +155,7 @@ final class DefaultChroniclerManager implements ChroniclerManager
     {
         $useWriteLock = $config['options']['write_lock'] ?? false;
 
-        if (!$useWriteLock) {
+        if ( ! $useWriteLock) {
             return new NoWriteLock();
         }
 
@@ -172,18 +171,18 @@ final class DefaultChroniclerManager implements ChroniclerManager
     {
         $strategyKey = $config['strategy'] ?? 'default';
 
-        if ($strategyKey === 'default') {
-            $strategyKey = $this->fromChronicler("strategy.default");
+        if ('default' === $strategyKey) {
+            $strategyKey = $this->fromChronicler('strategy.default');
         }
 
         $strategy = $this->fromChronicler("strategy.$strategyKey");
 
         if (null === $persistence = $strategy['persistence'] ?? null) {
-            throw new RuntimeException("Unable to determine persistence strategy");
+            throw new RuntimeException('Unable to determine persistence strategy');
         }
 
-        if (!class_exists($persistence) && !$this->app->bound($persistence)) {
-            throw new RuntimeException("Persistence strategy must be a valid class name or a service registered in ioc");
+        if ( ! class_exists($persistence) && ! $this->app->bound($persistence)) {
+            throw new RuntimeException('Persistence strategy must be a valid class name or a service registered in ioc');
         }
 
         return $this->app->make($persistence);
@@ -210,14 +209,14 @@ final class DefaultChroniclerManager implements ChroniclerManager
             return new InMemoryChronicler($eventStreamProvider);
         }
 
-        if ($options['use_transaction'] === true) {
+        if (true === $options['use_transaction']) {
             return new InMemoryTransactionalChronicler($eventStreamProvider);
         }
 
         $useEventDecorator = $options['use_event_decorator'] ?? false;
         $tracker = $this->determineTracker($config);
 
-        if ($useEventDecorator === true && $tracker instanceof StreamTracker) {
+        if (true === $useEventDecorator && $tracker instanceof StreamTracker) {
             if ($tracker instanceof TransactionalStreamTracker) {
                 return new GenericTransactionalEventChronicler(
                     new InMemoryTransactionalChronicler($eventStreamProvider),
@@ -239,8 +238,8 @@ final class DefaultChroniclerManager implements ChroniclerManager
 
         $eventStream = $this->fromChronicler("provider.$eventStreamKey");
 
-        if (!is_string($eventStream)) {
-            throw new RuntimeException("Unable to determine stream provider");
+        if ( ! is_string($eventStream)) {
+            throw new RuntimeException('Unable to determine stream provider');
         }
 
         return $this->app->make($eventStream);

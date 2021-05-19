@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Exception;
 
-use Illuminate\Database\QueryException;
-use PDOException;
 use Throwable;
+use PDOException;
+use Illuminate\Database\QueryException;
 
 class QueryFailure extends RuntimeException
 {
@@ -13,7 +14,7 @@ class QueryFailure extends RuntimeException
     {
         return new self(
             self::getPreviousExceptionMessage($queryException->getPrevious()),
-            (int)$queryException->getCode(),
+            (int) $queryException->getCode(),
             $queryException
         );
     }

@@ -1,12 +1,13 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Driver\Connection\Scope;
 
-use Chronhub\Chronicler\Driver\Connection\ConnectionQueryScope;
+use Illuminate\Database\Query\Builder;
 use Chronhub\Chronicler\Exception\InvalidArgumentException;
 use Chronhub\Chronicler\Support\Contracts\Query\QueryFilter;
-use Illuminate\Database\Query\Builder;
+use Chronhub\Chronicler\Driver\Connection\ConnectionQueryScope;
 
 class PgsqlQueryScope extends ConnectionQueryScope
 {
