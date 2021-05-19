@@ -40,10 +40,18 @@ final class MarkCausationCommand implements MessageSubscriber
             function (ContextualMessage $context): void {
                 $command = $this->determineCommand($context->message());
 
-                if ($command) {
-                    $this->oneTimeListeners[] = $this->subscribeOnFirstCommitEvent($command);
+                $callback = function (ContextualStream $stream) use ($command): void {
+                    if ($command) {
+                        $messageDecorator = $this->correlationMessageDecorator($command);
 
-                    $this->oneTimeListeners[] = $this->subscribeOnPersistStreamEvent($command);
+                        $stream->decorateStreamEvents($messageDecorator);
+                    }
+                };
+
+                if ($command) {
+                    $this->oneTimeListeners[] = $this->subscribeOnFirstCommitEvent($callback);
+
+                    $this->oneTimeListeners[] = $this->subscribeOnPersistStreamEvent($callback);
                 }
             }, 1000);
 
@@ -51,33 +59,21 @@ final class MarkCausationCommand implements MessageSubscriber
             function (): void {
                 $this->chronicler->unsubscribe(...$this->oneTimeListeners);
                 $this->oneTimeListeners = [];
-            },1000);
-    }
-
-    private function subscribeOnPersistStreamEvent(DomainCommand $command): OneTimeListener
-    {
-        return $this->chronicler->subscribeOnce(
-            EventableChronicler::PERSIST_STREAM_EVENT,
-            function (ContextualStream $stream) use ($command): void {
-                if ($command) {
-                    $messageDecorator = $this->correlationMessageDecorator($command);
-
-                    $stream->decorateStreamEvents($messageDecorator);
-                }
             }, 1000);
     }
 
-    private function subscribeOnFirstCommitEvent(DomainCommand $command): OneTimeListener
+    private function subscribeOnPersistStreamEvent(callable $callback): OneTimeListener
     {
         return $this->chronicler->subscribeOnce(
-            EventableChronicler::FIRST_COMMIT_EVENT,
-            function (ContextualStream $stream) use ($command): void {
-                if ($command) {
-                    $messageDecorator = $this->correlationMessageDecorator($command);
+            EventableChronicler::PERSIST_STREAM_EVENT, $callback, 1000
+        );
+    }
 
-                    $stream->decorateStreamEvents($messageDecorator);
-                }
-            }, 1000);
+    private function subscribeOnFirstCommitEvent(callable $callback): OneTimeListener
+    {
+        return $this->chronicler->subscribeOnce(
+            EventableChronicler::FIRST_COMMIT_EVENT, $callback, 1000
+        );
     }
 
     private function determineCommand(Message $message): ?DomainCommand
@@ -109,10 +105,9 @@ final class MarkCausationCommand implements MessageSubscriber
                     return $message;
                 }
 
-                $message = $message->withHeader(Header::EVENT_CAUSATION_ID, $this->eventId);
-                $message = $message->withHeader(Header::EVENT_CAUSATION_TYPE, $this->eventType);
-
-                return $message;
+                return $message
+                    ->withHeader(Header::EVENT_CAUSATION_ID, $this->eventId)
+                    ->withHeader(Header::EVENT_CAUSATION_TYPE, $this->eventType);
             }
         };
     }
