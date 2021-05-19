@@ -1,6 +1,7 @@
 /vendor
 build
-.phpunit.result.cache
-.idea
-TODO.md
 composer.lock
+TODO.md
+.phpunit.result.cache
+.php_cs.cache
+.idea
