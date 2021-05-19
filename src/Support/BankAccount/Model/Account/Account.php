@@ -13,8 +13,9 @@ final class Account implements AggregateRoot
 {
     use HasAggregateRoot;
 
-    private CustomerId $customerId;
     private int $balance = 0;
+    private int $failures = 0;
+    private CustomerId $customerId;
 
     public static function register(AccountId $accountId, CustomerId $customerId): self
     {
@@ -27,7 +28,24 @@ final class Account implements AggregateRoot
 
     public function makeDeposit(int $deposit): void
     {
-        $this->recordThat(DepositMade::forUser($this->accountId(), $this->customerId, $deposit));
+        $this->recordThat(DepositMade::forUser(
+            $this->accountId(), $this->customerId, $deposit, $this->balance)
+        );
+    }
+
+    public function makeWithdraw(int $withdraw): void
+    {
+        $withdraw = abs($withdraw);
+
+        if ($this->balance - $withdraw < 0) {
+            $this->recordThat(WithdrawFailed::forUser(
+                $this->accountId(), $this->customerId, $withdraw, $this->balance, $this->failures)
+            );
+        } else {
+            $this->recordThat(WithdrawMade::forUser(
+                $this->accountId(), $this->customerId, $withdraw, $this->balance)
+            );
+        }
     }
 
     public function accountId(): AccountId|AggregateId
@@ -45,6 +63,11 @@ final class Account implements AggregateRoot
         return $this->balance;
     }
 
+    public function failures(): int
+    {
+        return $this->failures;
+    }
+
     protected function applyAccountRegistered(AccountRegistered $event): void
     {
         $this->customerId = $event->customerId();
@@ -53,5 +76,15 @@ final class Account implements AggregateRoot
     protected function applyDepositMade(DepositMade $event): void
     {
         $this->balance += $event->deposit();
+    }
+
+    protected function applyWithdrawMade(WithdrawMade $event): void
+    {
+        $this->balance -= $event->withdraw();
+    }
+
+    protected function applyWithdrawFailed(WithdrawFailed $event): void
+    {
+        ++$this->failures;
     }
 }

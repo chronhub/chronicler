@@ -8,19 +8,21 @@ use Chronhub\Foundation\Aggregate\AggregateChanged;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerId;
 
-final class DepositMade extends AggregateChanged
+final class WithdrawFailed extends AggregateChanged
 {
     public static function forUser(AccountId $accountId,
                                    CustomerId $customerId,
-                                   int $deposit,
-                                   int $oldBalance): self
+                                   int $withdraw,
+                                   int $balance,
+                                   int $failures): self
     {
         return self::occur(
             $accountId->toString(),
             [
-                'customerId'  => $customerId->toString(),
-                'old_balance' => $oldBalance,
-                'deposit'     => $deposit,
+                'customerId' => $customerId->toString(),
+                'withdraw'   => $withdraw,
+                'balance'    => $balance,
+                'failures'   => $failures,
             ]
         );
     }
@@ -35,13 +37,18 @@ final class DepositMade extends AggregateChanged
         return AccountId::fromString($this->aggregateId());
     }
 
-    public function deposit(): int
+    public function balance(): int
     {
-        return $this->content['deposit'];
+        return $this->content['balance'];
     }
 
-    public function oldBalance(): int
+    public function withdraw(): int
     {
-        return $this->content['old_balance'];
+        return $this->content['withdraw'];
+    }
+
+    public function failures(): int
+    {
+        return $this->content['failures'];
     }
 }

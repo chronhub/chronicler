@@ -11,10 +11,12 @@ final class ChangeCustomerName extends DomainCommand
 {
     public static function withCustomer(string $customerId, string $newCustomerName): self
     {
-        return new self([
-            'customer_id'=> $customerId,
-            'new_customer_name'=> $newCustomerName,
-        ]);
+        return new self(
+            [
+                'customer_id'       => $customerId,
+                'new_customer_name' => $newCustomerName,
+            ]
+        );
     }
 
     public function customerId(): CustomerId|AggregateId

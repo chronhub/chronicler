@@ -11,7 +11,12 @@ final class RegisterCustomer extends DomainCommand
 {
     public static function withData(string $customerId, string $name): self
     {
-        return new static(['customer_id' => $customerId, 'customer_name' => $name]);
+        return new static(
+            [
+                'customer_id'   => $customerId,
+                'customer_name' => $name,
+            ]
+        );
     }
 
     public function customerId(): CustomerId|AggregateId

@@ -29,6 +29,11 @@ final class Customer implements AggregateRoot
         $account->makeDeposit($deposit);
     }
 
+    public function withdraw(Account $account, int $withdraw): void
+    {
+        $account->makeWithdraw($withdraw);
+    }
+
     public function changeName(CustomerName $newName): void
     {
         if ($this->name->sameValueAs($newName)) {

@@ -9,11 +9,15 @@ use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 
 final class CustomerRegistered extends AggregateChanged
 {
-    public static function withCustomer(CustomerId $customerId, CustomerName $name): self
+    public static function withCustomer(CustomerId $customerId,
+                                        CustomerName $name): self
     {
-        return self::occur($customerId->toString(), [
-            'name' => $name->toString(),
-        ]);
+        return self::occur(
+            $customerId->toString(),
+            [
+                'name' => $name->toString(),
+            ]
+        );
     }
 
     public function customerId(): CustomerId|AggregateId
