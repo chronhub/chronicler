@@ -119,13 +119,6 @@ abstract class AbstractChroniclerConnection implements ChroniclerConnection
         }
     }
 
-    protected function queryBuilder(StreamName $streamName): Builder
-    {
-        $tableName = $this->persistenceStrategy->tableName($streamName);
-
-        return $this->connection->table($tableName);
-    }
-
     protected function serializeStreamEvents(Enumerable $streamEvents): array
     {
         return $streamEvents->map(
@@ -140,5 +133,12 @@ abstract class AbstractChroniclerConnection implements ChroniclerConnection
         }
 
         throw $exception;
+    }
+
+    protected function queryBuilder(StreamName $streamName): Builder
+    {
+        $tableName = $this->persistenceStrategy->tableName($streamName);
+
+        return $this->connection->table($tableName);
     }
 }

@@ -141,9 +141,9 @@ final class DefaultChroniclerManager implements ChroniclerManager
         return $this->resolveConnection($connection, PgsqlChronicler::class, $config);
     }
 
-    private function resolveConnection(Connection $connection, string $chroniclerClassName, array $config): Chronicler
+    private function resolveConnection(Connection $connection, string $chroniclerClass, array $config): Chronicler
     {
-        return new $chroniclerClassName(
+        return new $chroniclerClass(
             $connection,
             $this->determineEventStreamProvider($config),
             $this->determineStreamPersistence($config),
