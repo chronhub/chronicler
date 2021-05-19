@@ -27,10 +27,10 @@ interface TransactionalChronicler extends Chronicler
      */
     public function rollbackTransaction(): void;
 
-    public function inTransaction(): bool;
-
     /**
      * @throws Throwable
      */
     public function transactional(callable $callback): mixed;
+
+    public function inTransaction(): bool;
 }
