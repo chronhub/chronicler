@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Factory;
 
-use Chronhub\Chronicler\Driver\Connection\EventConverter;
 use Chronhub\Chronicler\Driver\Connection\Loader\LazyQueryLoader;
 use Chronhub\Chronicler\Driver\Connection\Loader\StreamEventLoader;
 use Chronhub\Chronicler\Driver\Connection\WriteLock\NoWriteLock;
@@ -198,9 +197,7 @@ final class DefaultChroniclerManager implements ChroniclerManager
             return $this->app->make($eventLoader);
         }
 
-        return new LazyQueryLoader(
-            $this->app->make(EventConverter::class)
-        );
+        return $this->app->make(LazyQueryLoader::class);
     }
 
     private function createInMemoryDriver(array $config): Chronicler

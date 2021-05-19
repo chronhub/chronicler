@@ -17,8 +17,8 @@ abstract class StreamEventLoader
 
     public function query(Builder $builder, StreamName $streamName): Generator
     {
-        // A stream not found exception is raised, when a stream name,
-        // which part of the table name raise a query exception
+        // A stream not found exception is raised, when a stream name
+        // which part of the table name, raise a query exception
         // and when stream events are empty
 
         try {

@@ -21,7 +21,7 @@ final class GenericAggregateRepository implements AggregateRepository
                                 protected Chronicler $chronicler,
                                 protected StreamProducer $streamProducer,
                                 protected AggregateCache $aggregateCache,
-                                protected AggregateEventReleaser $eventBuilder)
+                                protected AggregateEventReleaser $eventsReleaser)
     {
         //
     }
@@ -45,7 +45,7 @@ final class GenericAggregateRepository implements AggregateRepository
     {
         $this->aggregateType->assertAggregateRootIsSupported($aggregateRoot::class);
 
-        $events = $this->eventBuilder->releaseEvents($aggregateRoot);
+        $events = $this->eventsReleaser->releaseEvents($aggregateRoot);
 
         if (!$firstEvent = reset($events)) {
             return;
