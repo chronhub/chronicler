@@ -38,14 +38,14 @@ interface EventStreamProvider
 
     /**
      * Filter streams without internal
-     * usually start with dollar sign $
+     * start with dollar sign $
      *
      * @return array
      */
     public function allStreamWithoutInternal(): array;
 
     /**
-     * Check existence of stream name
+     * Check existence of stream
      *
      * @param string $streamName
      * @return bool
