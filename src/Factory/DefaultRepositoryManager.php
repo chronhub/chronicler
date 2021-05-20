@@ -17,6 +17,7 @@ use Chronhub\Chronicler\Aggregate\AggregateEventReleaser;
 use Chronhub\Chronicler\Support\Contracts\StreamProducer;
 use Chronhub\Foundation\Message\Decorator\ChainDecorators;
 use Chronhub\Chronicler\Aggregate\GenericAggregateRepository;
+use Chronhub\Chronicler\Factory\Concerns\HasRepositoryFactory;
 use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateType;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
 use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
@@ -28,6 +29,8 @@ use function is_string;
 
 final class DefaultRepositoryManager implements RepositoryManager
 {
+    use HasRepositoryFactory;
+
     private array $repositories = [];
     private array $customRepositories = [];
     private array $config;
@@ -101,21 +104,7 @@ final class DefaultRepositoryManager implements RepositoryManager
 
     private function makeStreamProducer(string $streamName, array $config): StreamProducer
     {
-        $connection = $this->fromChronicler('connections.' . $config['chronicler']);
-
-        if ('default' === $connection) {
-            $connection = $this->fromChronicler('connections.default');
-        }
-
-        $strategy = is_array($connection)
-            ? $connection['strategy']
-            : $this->fromChronicler("connections.$connection.strategy");
-
-        if ('default' === $strategy) {
-            $strategy = $this->fromChronicler('strategy.default') ?? null;
-        }
-
-        $streamProducer = $this->fromChronicler("strategy.$strategy.producer");
+        $streamProducer = $this->determineStreamProducerDriver($config);
 
         if ( ! is_string($streamProducer)) {
             throw new RuntimeException('Unable to determine stream producer strategy');
@@ -137,20 +126,7 @@ final class DefaultRepositoryManager implements RepositoryManager
 
     private function makeAggregateEventReleaser(string $streamName): AggregateEventReleaser
     {
-        $messageDecorators = [];
-
-        if (true === $this->fromChronicler('use_foundation_decorators') ?? false) {
-            $messageDecorators = $this->app['config']->get('reporter.messaging.decorators', []);
-        }
-
-        $eventDecorators = array_map(
-            fn (string $decorator) => $this->app->make($decorator),
-            array_merge(
-                $messageDecorators,
-                $this->fromChronicler('event_decorators') ?? [],
-                $this->fromChronicler("repositories.$streamName.event_decorators") ?? []
-            )
-        );
+        $eventDecorators = $this->determineRepositoryEventDecorator($streamName);
 
         $messageDecorators = new ChainDecorators(...$eventDecorators);
 

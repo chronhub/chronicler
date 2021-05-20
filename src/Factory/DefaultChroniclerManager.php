@@ -65,7 +65,7 @@ final class DefaultChroniclerManager implements ChroniclerManager
         $this->customChroniclers[$name] = $chronicler;
     }
 
-    private function resolveChronicleDriver($name): Chronicler
+    private function resolveChronicleDriver(string $name): Chronicler
     {
         if ($customChronicler = $this->customChroniclers[$name] ?? null) {
             return $customChronicler($this->app, $this->config);
@@ -136,7 +136,7 @@ final class DefaultChroniclerManager implements ChroniclerManager
     {
         $options = $config['options'] ?? false;
 
-        $eventStreamProvider = $this->determineEventStreamProvider($config);
+        $eventStreamProvider = $this->createEventStreamProvider($config);
 
         if (false === $options) {
             return new InMemoryChronicler($eventStreamProvider);
@@ -177,14 +177,14 @@ final class DefaultChroniclerManager implements ChroniclerManager
     {
         return new $chroniclerClass(
             $connection,
-            $this->determineEventStreamProvider($config),
-            $this->determineStreamPersistence($config),
-            $this->determineWriteLock($connection, $config),
-            $this->determineStreamEventLoader($config),
+            $this->createEventStreamProvider($config),
+            $this->createStreamPersistence($config),
+            $this->createWriteLock($connection, $config),
+            $this->createStreamEventLoader($config),
         );
     }
 
-    private function determineWriteLock(Connection $connection, array $config): WriteLockStrategy
+    private function createWriteLock(Connection $connection, array $config): WriteLockStrategy
     {
         $writeLock = $config['options']['write_lock'] ?? false;
 
@@ -204,7 +204,7 @@ final class DefaultChroniclerManager implements ChroniclerManager
         return $this->app->make($writeLock);
     }
 
-    private function determineStreamPersistence(array $config): StreamPersistence
+    private function createStreamPersistence(array $config): StreamPersistence
     {
         $strategyKey = $config['strategy'] ?? 'default';
 
@@ -225,7 +225,7 @@ final class DefaultChroniclerManager implements ChroniclerManager
         return $this->app->make($persistence);
     }
 
-    private function determineStreamEventLoader(array $config): StreamEventLoader
+    private function createStreamEventLoader(array $config): StreamEventLoader
     {
         $eventLoader = $config['query_loader'] ?? null;
 
@@ -236,7 +236,7 @@ final class DefaultChroniclerManager implements ChroniclerManager
         return $this->app->make(LazyQueryLoader::class);
     }
 
-    private function determineEventStreamProvider(array $config): EventStreamProvider
+    private function createEventStreamProvider(array $config): EventStreamProvider
     {
         $eventStreamKey = $config['provider'] ?? null;
 
@@ -249,7 +249,7 @@ final class DefaultChroniclerManager implements ChroniclerManager
         return $this->app->make($eventStream);
     }
 
-    public function determineTracker(array $config): ?StreamTracker
+    private function determineTracker(array $config): ?StreamTracker
     {
         $tracker = $config['tracking']['tracker_id'] ?? null;
 
