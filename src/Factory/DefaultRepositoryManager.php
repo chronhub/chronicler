@@ -20,7 +20,6 @@ use Chronhub\Chronicler\Aggregate\GenericAggregateRepository;
 use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateType;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
 use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
-use Chronhub\Foundation\Support\Contracts\Message\MessageDecorator;
 use Chronhub\Chronicler\Support\Contracts\Factory\ChroniclerManager;
 use Chronhub\Chronicler\Support\Contracts\Factory\RepositoryManager;
 use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateRepository;
@@ -53,6 +52,11 @@ final class DefaultRepositoryManager implements RepositoryManager
         return $this->repositories[$streamName] = $this->resolveAggregateRepository($streamName, $config);
     }
 
+    public function extends(string $streamName, callable $repository): void
+    {
+        $this->customRepositories[$streamName] = $repository;
+    }
+
     private function resolveAggregateRepository(string $streamName, array $config): AggregateRepository
     {
         if ($customRepository = $this->customRepositories[$streamName] ?? null) {
@@ -72,14 +76,12 @@ final class DefaultRepositoryManager implements RepositoryManager
             throw new RuntimeException("Invalid aggregate repository class $aggregateRepository");
         }
 
-        $eventBuilder = new AggregateEventReleaser($this->createChainEventDecorator($streamName));
-
         return new $aggregateRepository(
             $this->determineAggregateType($config['aggregate_type']),
             $this->chroniclerManager->create($config['chronicler']),
             $this->determineStreamProducer($streamName, $config),
             $this->createAggregateCacheDriver($config['cache'] ?? []),
-            $eventBuilder,
+            $this->createAggregateEventReleaser($streamName),
             $snapshotStoreId
         );
     }
@@ -133,7 +135,7 @@ final class DefaultRepositoryManager implements RepositoryManager
         return new GenericAggregateCache($store, $maxBeforeFlushingCache);
     }
 
-    private function createChainEventDecorator(string $streamName): MessageDecorator
+    private function createAggregateEventReleaser(string $streamName): AggregateEventReleaser
     {
         $messageDecorators = [];
 
@@ -150,17 +152,14 @@ final class DefaultRepositoryManager implements RepositoryManager
             )
         );
 
-        return new ChainDecorators(...$eventDecorators);
+        $messageDecorators = new ChainDecorators(...$eventDecorators);
+
+        return new AggregateEventReleaser($messageDecorators);
     }
 
     private function isSnapshotProvided(array $config): bool
     {
         return isset($config['snapshot']) && true === ($config['snapshot']['use_snapshot'] ?? false);
-    }
-
-    public function extends(string $streamName, callable $repository): void
-    {
-        $this->customRepositories[$streamName] = $repository;
     }
 
     private function fromChronicler(string $key): mixed
