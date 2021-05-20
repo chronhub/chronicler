@@ -132,6 +132,39 @@ final class DefaultChroniclerManager implements ChroniclerManager
         throw new RuntimeException('Unable to configure chronicler event decorator');
     }
 
+    private function createInMemoryDriver(array $config): Chronicler
+    {
+        $options = $config['options'] ?? false;
+
+        $eventStreamProvider = $this->determineEventStreamProvider($config);
+
+        if (false === $options) {
+            return new InMemoryChronicler($eventStreamProvider);
+        }
+
+        if (true === $options['use_transaction']) {
+            return new InMemoryTransactionalChronicler($eventStreamProvider);
+        }
+
+        $useEventDecorator = $options['use_event_decorator'] ?? false;
+        $tracker = $this->determineTracker($config);
+
+        if (true === $useEventDecorator && $tracker instanceof StreamTracker) {
+            if ($tracker instanceof TransactionalStreamTracker) {
+                return new GenericTransactionalEventChronicler(
+                    new InMemoryTransactionalChronicler($eventStreamProvider),
+                    $tracker
+                );
+            }
+
+            return new GenericEventChronicler(
+                new InMemoryChronicler($eventStreamProvider), $tracker
+            );
+        }
+
+        throw new RuntimeException('Unable to configure chronicler event decorator');
+    }
+
     private function createPgsqlDriver(array $config): Chronicler
     {
         /** @var Connection $connection */
@@ -153,18 +186,22 @@ final class DefaultChroniclerManager implements ChroniclerManager
 
     private function determineWriteLock(Connection $connection, array $config): WriteLockStrategy
     {
-        $useWriteLock = $config['options']['write_lock'] ?? false;
+        $writeLock = $config['options']['write_lock'] ?? false;
 
-        if ( ! $useWriteLock) {
+        if (false === $writeLock) {
             return new NoWriteLock();
         }
 
-        $driver = $connection->getDriverName();
+        if (true === $writeLock) {
+            $driver = $connection->getDriverName();
 
-        return match ($driver) {
-            'pgsql' => new PgsqlWriteLock($connection),
-            default => throw new RuntimeException("Unavailable write lock strategy for driver $driver"),
-        };
+            return match ($driver) {
+                'pgsql' => new PgsqlWriteLock($connection),
+                default => throw new RuntimeException("Unavailable write lock strategy for driver $driver"),
+            };
+        }
+
+        return $this->app->make($writeLock);
     }
 
     private function determineStreamPersistence(array $config): StreamPersistence
@@ -197,39 +234,6 @@ final class DefaultChroniclerManager implements ChroniclerManager
         }
 
         return $this->app->make(LazyQueryLoader::class);
-    }
-
-    private function createInMemoryDriver(array $config): Chronicler
-    {
-        $options = $config['options'] ?? false;
-
-        $eventStreamProvider = $this->determineEventStreamProvider($config);
-
-        if (false === $options) {
-            return new InMemoryChronicler($eventStreamProvider);
-        }
-
-        if (true === $options['use_transaction']) {
-            return new InMemoryTransactionalChronicler($eventStreamProvider);
-        }
-
-        $useEventDecorator = $options['use_event_decorator'] ?? false;
-        $tracker = $this->determineTracker($config);
-
-        if (true === $useEventDecorator && $tracker instanceof StreamTracker) {
-            if ($tracker instanceof TransactionalStreamTracker) {
-                return new GenericTransactionalEventChronicler(
-                    new InMemoryTransactionalChronicler($eventStreamProvider),
-                    $tracker
-                );
-            }
-
-            return new GenericEventChronicler(
-                new InMemoryChronicler($eventStreamProvider), $tracker
-            );
-        }
-
-        throw new RuntimeException('Unable to configure chronicler event decorator');
     }
 
     private function determineEventStreamProvider(array $config): EventStreamProvider
