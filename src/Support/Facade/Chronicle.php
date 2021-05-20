@@ -7,7 +7,7 @@ namespace Chronhub\Chronicler\Support\Facade;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static create(string $name)
+ * @method static create(string $name = 'default')
  * @method static extends (string $name, callable $chronicler)
  */
 final class Chronicle extends Facade
