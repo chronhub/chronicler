@@ -5,7 +5,7 @@ $finder = PhpCsFixer\Finder::create()->in([
     __DIR__ . '/tests/',
 ]);
 
-return (new PhpCsFixer\Config)
+return (new PhpCsFixer\Config())
     ->setRules([
         '@Symfony'                => true,
         'concat_space'            => ['spacing' => 'one'],
