@@ -18,6 +18,7 @@ use Chronhub\Chronicler\Support\Contracts\Query\QueryFilter;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Foundation\Support\Contracts\Message\MessageDecorator;
 use Chronhub\Chronicler\Support\Contracts\Tracking\ContextualStream as Context;
+use function in_array;
 
 class ContextualStream implements Context
 {

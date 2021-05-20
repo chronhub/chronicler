@@ -1,27 +1,28 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Aggregate;
 
-use Chronhub\Chronicler\Aggregate\AggregateEventReleaser;
-use Chronhub\Chronicler\Aggregate\GenericAggregateRepository;
-use Chronhub\Chronicler\Stream\Stream;
-use Chronhub\Chronicler\Stream\StreamName;
-use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
-use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateType;
-use Chronhub\Chronicler\Support\Contracts\Chronicler;
-use Chronhub\Chronicler\Support\Contracts\StreamProducer;
-use Chronhub\Chronicler\Tests\Double\SomeAggregateRoot;
-use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
-use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
-use Chronhub\Foundation\Aggregate\GenericAggregateId;
-use Chronhub\Foundation\Message\DomainEvent;
-use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
-use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
-use Chronhub\Foundation\Support\Contracts\Message\Header;
 use Generator;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
+use Chronhub\Chronicler\Stream\Stream;
+use Chronhub\Chronicler\Stream\StreamName;
+use Chronhub\Foundation\Message\DomainEvent;
+use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
+use Chronhub\Chronicler\Support\Contracts\Chronicler;
+use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
+use Chronhub\Foundation\Aggregate\GenericAggregateId;
+use Chronhub\Chronicler\Tests\Double\SomeAggregateRoot;
+use Chronhub\Chronicler\Aggregate\AggregateEventReleaser;
+use Chronhub\Chronicler\Support\Contracts\StreamProducer;
+use Chronhub\Foundation\Support\Contracts\Message\Header;
+use Chronhub\Chronicler\Aggregate\GenericAggregateRepository;
+use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
+use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateType;
+use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
+use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
 
 /** @coversDefaultClass \Chronhub\Chronicler\Aggregate\GenericAggregateRepository */
 final class GenericAggregateRepositoryTest extends TestCaseWithProphecy
@@ -32,7 +33,6 @@ final class GenericAggregateRepositoryTest extends TestCaseWithProphecy
     private ObjectProphecy|StreamProducer $streamProducer;
     private ObjectProphecy|AggregateEventReleaser $eventReleaser;
     private ObjectProphecy|AggregateRoot $aggregateRoot;
-
 
     protected function setUp(): void
     {
@@ -69,8 +69,8 @@ final class GenericAggregateRepositoryTest extends TestCaseWithProphecy
         $releasedEvents = [
             SomeDomainEvent::fromContent(['steph' => 'bug'])
                 ->withHeaders([
-                    Header::AGGREGATE_VERSION => 1
-                ])
+                    Header::AGGREGATE_VERSION => 1,
+                ]),
         ];
 
         $this->eventReleaser
@@ -114,8 +114,8 @@ final class GenericAggregateRepositoryTest extends TestCaseWithProphecy
         $releasedEvents = [
             SomeDomainEvent::fromContent(['steph' => 'bug'])
                 ->withHeaders([
-                    Header::AGGREGATE_VERSION => 1
-                ])
+                    Header::AGGREGATE_VERSION => 1,
+                ]),
         ];
 
         $this->eventReleaser
@@ -155,8 +155,8 @@ final class GenericAggregateRepositoryTest extends TestCaseWithProphecy
         $releasedEvents = [
             SomeDomainEvent::fromContent(['steph' => 'bug'])
                 ->withHeaders([
-                    Header::AGGREGATE_VERSION => 10
-                ])
+                    Header::AGGREGATE_VERSION => 10,
+                ]),
         ];
 
         $this->eventReleaser
@@ -180,7 +180,7 @@ final class GenericAggregateRepositoryTest extends TestCaseWithProphecy
 
         $this->chronicler->persist(new Stream($streamName, $releasedEvents));
 
-       $this->repositoryInstance()->persist($this->aggregateRoot->reveal());
+        $this->repositoryInstance()->persist($this->aggregateRoot->reveal());
     }
 
     /**
@@ -272,7 +272,7 @@ final class GenericAggregateRepositoryTest extends TestCaseWithProphecy
     {
         yield from [
             $firstEvent,
-            SomeDomainEvent::fromContent(['name' => 'steph'])
+            SomeDomainEvent::fromContent(['name' => 'steph']),
         ];
 
         return 2;

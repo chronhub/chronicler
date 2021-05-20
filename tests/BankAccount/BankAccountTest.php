@@ -1,17 +1,18 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\BankAccount;
 
 use Chronhub\Chronicler\Stream\Stream;
+use Illuminate\Contracts\Foundation\Application;
+use Chronhub\Foundation\Reporter\Subscribers\HandleEvent;
+use Chronhub\Foundation\Reporter\Subscribers\HandleCommand;
 use Chronhub\Chronicler\Support\BankAccount\Model\Account\DepositMade;
 use Chronhub\Chronicler\Support\BankAccount\Model\Account\MakeDepositHandler;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\RegisterCustomerHandler;
 use Chronhub\Chronicler\Support\BankAccount\Model\Account\RegisterBankAccountHandler;
 use Chronhub\Chronicler\Support\BankAccount\Model\Customer\ChangeCustomerNameHandler;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\RegisterCustomerHandler;
-use Chronhub\Foundation\Reporter\Subscribers\HandleCommand;
-use Chronhub\Foundation\Reporter\Subscribers\HandleEvent;
-use Illuminate\Contracts\Foundation\Application;
 
 class BankAccountTest extends AbstractBankAccountTest
 {
@@ -42,7 +43,7 @@ class BankAccountTest extends AbstractBankAccountTest
                 'register-bank-account' => RegisterBankAccountHandler::class,
                 'make-deposit'          => MakeDepositHandler::class,
                 'change-customer-name'  => ChangeCustomerNameHandler::class,
-            ]
+            ],
         ]);
 
         $app['config']->set('reporter.reporting.event.default', [
@@ -52,28 +53,27 @@ class BankAccountTest extends AbstractBankAccountTest
             ],
             'map'            => [
                 'customer-registered'   => [
-                    function () {
+                    function (): void {
                         $this->customerRegistered = true;
-                    }],
+                    }, ],
                 'customer-name-changed' => [
-                    function () {
+                    function (): void {
                         $this->customerNameChanged = true;
-                    }],
+                    }, ],
                 'account-registered'    => [
-                    function () {
+                    function (): void {
                         $this->accountRegistered = true;
-                    }],
+                    }, ],
                 'deposit-made'          => [
-                    function (DepositMade $event) {
+                    function (DepositMade $event): void {
                         $this->currentBalance += $event->deposit();
-                        $this->transactions++;
-                    }],
-            ]
+                        ++$this->transactions;
+                    }, ],
+            ],
         ]);
     }
 
     protected function finalizeTest(): void
     {
-        //
     }
 }

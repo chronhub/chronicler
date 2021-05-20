@@ -1,19 +1,20 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Tracking;
 
-use Chronhub\Chronicler\Exception\ConcurrencyException;
-use Chronhub\Chronicler\Exception\InvalidArgumentException;
-use Chronhub\Chronicler\Exception\StreamAlreadyExists;
-use Chronhub\Chronicler\Exception\StreamNotFound;
+use Generator;
 use Chronhub\Chronicler\Stream\Stream;
-use Chronhub\Chronicler\Stream\StreamName;
-use Chronhub\Chronicler\Support\Contracts\Query\QueryFilter;
 use Chronhub\Chronicler\Tests\TestCase;
+use Chronhub\Chronicler\Stream\StreamName;
+use Chronhub\Chronicler\Exception\StreamNotFound;
 use Chronhub\Chronicler\Tracking\ContextualStream;
 use Chronhub\Foundation\Aggregate\GenericAggregateId;
-use Generator;
+use Chronhub\Chronicler\Exception\StreamAlreadyExists;
+use Chronhub\Chronicler\Exception\ConcurrencyException;
+use Chronhub\Chronicler\Exception\InvalidArgumentException;
+use Chronhub\Chronicler\Support\Contracts\Query\QueryFilter;
 
 final class ContextualStreamTest extends TestCase
 {
@@ -101,10 +102,9 @@ final class ContextualStreamTest extends TestCase
         $context = new ContextualStream(null);
 
         $queryFilter = new class() implements QueryFilter {
-
             public function filterQuery(): callable
             {
-                return function () { };
+                return function (): void { };
             }
         };
 
@@ -178,7 +178,7 @@ final class ContextualStreamTest extends TestCase
      */
     public function it_test_concurrency_exception(): void
     {
-        $exception = new ConcurrencyException("Stream failed");
+        $exception = new ConcurrencyException('Stream failed');
 
         $context = new ContextualStream(null);
 

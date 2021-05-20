@@ -1,29 +1,30 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit;
 
-use Chronhub\Chronicler\Exception\ConcurrencyException;
-use Chronhub\Chronicler\Exception\StreamAlreadyExists;
-use Chronhub\Chronicler\Exception\StreamNotFound;
-use Chronhub\Chronicler\GenericEventChronicler;
-use Chronhub\Chronicler\Stream\Stream;
-use Chronhub\Chronicler\Stream\StreamName;
-use Chronhub\Chronicler\Support\Contracts\Chronicler;
-use Chronhub\Chronicler\Support\Contracts\EventableChronicler;
-use Chronhub\Chronicler\Support\Contracts\Query\QueryFilter;
-use Chronhub\Chronicler\Support\Contracts\Tracking\ContextualStream;
-use Chronhub\Chronicler\Support\Contracts\Tracking\StreamTracker;
-use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
-use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
-use Chronhub\Chronicler\Tracking\TrackStream;
-use Chronhub\Foundation\Aggregate\GenericAggregateId;
-use Chronhub\Foundation\Message\Message;
-use Chronhub\Foundation\Support\Contracts\Tracker\Listener;
 use Generator;
+use Throwable;
 use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
-use Throwable;
+use Chronhub\Chronicler\Stream\Stream;
+use Chronhub\Foundation\Message\Message;
+use Chronhub\Chronicler\Stream\StreamName;
+use Chronhub\Chronicler\Tracking\TrackStream;
+use Chronhub\Chronicler\GenericEventChronicler;
+use Chronhub\Chronicler\Exception\StreamNotFound;
+use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
+use Chronhub\Chronicler\Support\Contracts\Chronicler;
+use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
+use Chronhub\Foundation\Aggregate\GenericAggregateId;
+use Chronhub\Chronicler\Exception\StreamAlreadyExists;
+use Chronhub\Chronicler\Exception\ConcurrencyException;
+use Chronhub\Foundation\Support\Contracts\Tracker\Listener;
+use Chronhub\Chronicler\Support\Contracts\Query\QueryFilter;
+use Chronhub\Chronicler\Support\Contracts\EventableChronicler;
+use Chronhub\Chronicler\Support\Contracts\Tracking\StreamTracker;
+use Chronhub\Chronicler\Support\Contracts\Tracking\ContextualStream;
 use function get_class;
 
 /** @coversDefaultClass \Chronhub\Chronicler\ProvideEventsChronicle */
@@ -99,7 +100,6 @@ final class GenericEventChroniclerTest extends TestCaseWithProphecy
     /**
      * @test
      * @dataProvider provideExceptionOnPersistStreamEvents
-     * @param Throwable $exception
      */
     public function it_raise_exception_on_persist_stream_events(Throwable $exception): void
     {
@@ -135,7 +135,7 @@ final class GenericEventChroniclerTest extends TestCaseWithProphecy
     }
 
     /**
-     * ^@test
+     * ^@test.
      */
     public function it_raise_stream_not_found_exception_on_delete_stream(): void
     {
@@ -158,15 +158,13 @@ final class GenericEventChroniclerTest extends TestCaseWithProphecy
     /**
      * @test
      * @dataProvider provideEventWithDirection
-     * @param string $event
-     * @param string $direction
      */
     public function it_dispatch_retrieve_all_events_with_direction(string $event, string $direction): void
     {
         $aggregateId = GenericAggregateId::create();
         $expectedEvents = [
             new Message(SomeDomainEvent::fromContent(['foo'])),
-            new Message(SomeDomainEvent::fromContent(['bar']))
+            new Message(SomeDomainEvent::fromContent(['bar'])),
         ];
 
         $this->chronicler
@@ -193,8 +191,6 @@ final class GenericEventChroniclerTest extends TestCaseWithProphecy
     /**
      * @test
      * @dataProvider provideEventWithDirection
-     * @param string $event
-     * @param string $direction
      */
     public function it_raise_stream_not_found_exception_on_retrieve_all_events(string $event, string $direction): void
     {
@@ -230,7 +226,7 @@ final class GenericEventChroniclerTest extends TestCaseWithProphecy
 
         $expectedEvents = [
             new Message(SomeDomainEvent::fromContent(['name' => 'steph'])),
-            new Message(SomeDomainEvent::fromContent(['name' => 'bug']))
+            new Message(SomeDomainEvent::fromContent(['name' => 'bug'])),
         ];
 
         $this->chronicler
@@ -284,7 +280,6 @@ final class GenericEventChroniclerTest extends TestCaseWithProphecy
     /**
      * @test
      * @dataProvider provideBool
-     * @param bool $streamExists
      */
     public function it_dispatch_has_stream_event(bool $streamExists): void
     {

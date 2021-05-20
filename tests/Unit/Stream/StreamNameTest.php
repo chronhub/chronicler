@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Chronhub\Chronicler\Tests\Unit\Stream;
 
-use Chronhub\Chronicler\Exception\InvalidArgumentException;
-use Chronhub\Chronicler\Stream\StreamName;
-use Chronhub\Chronicler\Tests\TestCase;
 use Generator;
+use Chronhub\Chronicler\Tests\TestCase;
+use Chronhub\Chronicler\Stream\StreamName;
+use Chronhub\Chronicler\Exception\InvalidArgumentException;
 
 /** @coversDefaultClass \Chronhub\Chronicler\Stream\StreamName */
 class StreamNameTest extends TestCase
@@ -29,12 +31,11 @@ class StreamNameTest extends TestCase
 
         $this->assertEquals('customer_stream', $streamName->toString());
         $this->assertEquals('customer_stream', $streamName->__toString());
-        $this->assertEquals('customer_stream', (string)$streamName);
+        $this->assertEquals('customer_stream', (string) $streamName);
     }
 
     /**
      * @test
-     * @param string $invalidStreamName
      * @dataProvider provideInvalidStreamName
      */
     public function it_raise_exception_when_stream_name_is_empty(string $invalidStreamName): void

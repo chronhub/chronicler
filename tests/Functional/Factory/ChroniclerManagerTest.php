@@ -1,16 +1,17 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Functional\Factory;
 
-use Chronhub\Chronicler\Driver\InMemory\InMemoryChronicler;
-use Chronhub\Chronicler\Driver\InMemory\InMemoryTransactionalChronicler;
-use Chronhub\Chronicler\Exception\InvalidArgumentException;
-use Chronhub\Chronicler\Exception\RuntimeException;
-use Chronhub\Chronicler\Factory\ChroniclerServiceProvider;
-use Chronhub\Chronicler\Support\Contracts\Factory\ChroniclerManager;
-use Chronhub\Chronicler\Tests\TestCaseWithOrchestra;
 use Illuminate\Contracts\Foundation\Application;
+use Chronhub\Chronicler\Exception\RuntimeException;
+use Chronhub\Chronicler\Tests\TestCaseWithOrchestra;
+use Chronhub\Chronicler\Factory\ChroniclerServiceProvider;
+use Chronhub\Chronicler\Driver\InMemory\InMemoryChronicler;
+use Chronhub\Chronicler\Exception\InvalidArgumentException;
+use Chronhub\Chronicler\Support\Contracts\Factory\ChroniclerManager;
+use Chronhub\Chronicler\Driver\InMemory\InMemoryTransactionalChronicler;
 
 /** @coversDefaultClass \Chronhub\Chronicler\Factory\DefaultChroniclerManager */
 final class ChroniclerManagerTest extends TestCaseWithOrchestra
@@ -181,31 +182,5 @@ final class ChroniclerManagerTest extends TestCaseWithOrchestra
 
         $this->assertInstanceOf(InMemoryChronicler::class, $chronicler);
         $this->assertEquals($this->app['config']->get('chronicler'), $refConfig);
-    }
-
-    /**
-     * @test
-     */
-    public function it_attach_stream_subscriber_to_chronicler_tracker(): void
-    {
-        // set tracker eventable decorator
-        //$this->app['config']->set('chronicler.')
-        $this->markTestIncomplete('todo');
-
-        $this->app['config']->set('chronicler.connections', [
-            'my_in_memory' => [
-                'driver'   => 'in_memory',
-                'strategy' => 'single',
-                'provider' => 'in_memory',
-                'options'  => false,
-            ],
-
-            'in_memory' => [
-                'driver'   => 'in_memory',
-                'strategy' => 'single',
-                'provider' => 'in_memory',
-                'options'  => false,
-            ],
-        ]);
     }
 }

@@ -1,16 +1,17 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Tracking\Subscribers;
 
-use Chronhub\Chronicler\Support\Contracts\Chronicler;
-use Chronhub\Chronicler\Support\Contracts\TransactionalChronicler;
-use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
-use Chronhub\Chronicler\Tracking\Subscribers\TransactionalHandlerSubscriber;
-use Chronhub\Foundation\Support\Contracts\Reporter\Reporter;
-use Chronhub\Foundation\Tracker\TrackMessage;
-use Prophecy\Prophecy\ObjectProphecy;
 use RuntimeException;
+use Prophecy\Prophecy\ObjectProphecy;
+use Chronhub\Foundation\Tracker\TrackMessage;
+use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
+use Chronhub\Chronicler\Support\Contracts\Chronicler;
+use Chronhub\Foundation\Support\Contracts\Reporter\Reporter;
+use Chronhub\Chronicler\Support\Contracts\TransactionalChronicler;
+use Chronhub\Chronicler\Tracking\Subscribers\TransactionalHandlerSubscriber;
 
 final class TransactionalHandlerSubscriberTest extends TestCaseWithProphecy
 {

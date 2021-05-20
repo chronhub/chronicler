@@ -1,13 +1,14 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Functional\Facade;
 
-use Chronhub\Chronicler\Driver\InMemory\InMemoryChronicler;
-use Chronhub\Chronicler\Driver\InMemory\InMemoryTransactionalChronicler;
-use Chronhub\Chronicler\Factory\ChroniclerServiceProvider;
 use Chronhub\Chronicler\Support\Facade\Chronicle;
 use Chronhub\Chronicler\Tests\TestCaseWithOrchestra;
+use Chronhub\Chronicler\Factory\ChroniclerServiceProvider;
+use Chronhub\Chronicler\Driver\InMemory\InMemoryChronicler;
+use Chronhub\Chronicler\Driver\InMemory\InMemoryTransactionalChronicler;
 
 final class ChronicleFacadeTest extends TestCaseWithOrchestra
 {

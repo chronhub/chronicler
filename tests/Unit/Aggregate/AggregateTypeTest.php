@@ -1,19 +1,20 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Aggregate;
 
-use Chronhub\Chronicler\Aggregate\GenericAggregateType;
-use Chronhub\Chronicler\Exception\InvalidArgumentException;
-use Chronhub\Chronicler\Tests\Double\AnotherAggregateRoot;
-use Chronhub\Chronicler\Tests\Double\InheritFromSomeAggregateRoot;
-use Chronhub\Chronicler\Tests\Double\SomeAggregateChanged;
-use Chronhub\Chronicler\Tests\Double\SomeAggregateRoot;
+use Generator;
 use Chronhub\Chronicler\Tests\TestCase;
 use Chronhub\Foundation\Aggregate\AggregateChanged;
-use Chronhub\Foundation\Support\Contracts\Message\Header;
 use Chronhub\Foundation\Tests\Double\SomeNakedObject;
-use Generator;
+use Chronhub\Chronicler\Aggregate\GenericAggregateType;
+use Chronhub\Chronicler\Tests\Double\SomeAggregateRoot;
+use Chronhub\Foundation\Support\Contracts\Message\Header;
+use Chronhub\Chronicler\Tests\Double\AnotherAggregateRoot;
+use Chronhub\Chronicler\Tests\Double\SomeAggregateChanged;
+use Chronhub\Chronicler\Exception\InvalidArgumentException;
+use Chronhub\Chronicler\Tests\Double\InheritFromSomeAggregateRoot;
 
 final class AggregateTypeTest extends TestCase
 {
@@ -44,7 +45,7 @@ final class AggregateTypeTest extends TestCase
     public function it_raise_exception_when_children_are_not_subclass_of_aggregate_root(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Class " . SomeNakedObject::class . " must inherit from " . SomeAggregateRoot::class);
+        $this->expectExceptionMessage('Class ' . SomeNakedObject::class . ' must inherit from ' . SomeAggregateRoot::class);
 
         new GenericAggregateType(SomeAggregateRoot::class, [SomeNakedObject::class]);
     }
@@ -73,7 +74,7 @@ final class AggregateTypeTest extends TestCase
     public function it_raise_exception_when_aggregate_root_is_not_supported(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("Aggregate root " . AnotherAggregateRoot::class . " class is not supported");
+        $this->expectExceptionMessage('Aggregate root ' . AnotherAggregateRoot::class . ' class is not supported');
 
         $aggregateType = new GenericAggregateType(SomeAggregateRoot::class, [InheritFromSomeAggregateRoot::class]);
 

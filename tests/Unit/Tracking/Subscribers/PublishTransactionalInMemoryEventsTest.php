@@ -1,21 +1,22 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Tracking\Subscribers;
 
-use Chronhub\Chronicler\Exception\InvalidArgumentException;
-use Chronhub\Chronicler\Exception\RuntimeException;
-use Chronhub\Chronicler\Support\Contracts\Chronicler;
-use Chronhub\Chronicler\Support\Contracts\InMemoryChronicler;
-use Chronhub\Chronicler\Support\Contracts\TransactionalChronicler;
-use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
-use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
-use Chronhub\Chronicler\Tracking\Subscribers\PublishTransactionalInMemoryEvents;
+use Prophecy\Argument;
 use Chronhub\Foundation\Message\DomainEvent;
 use Chronhub\Foundation\Reporter\ReportEvent;
-use Chronhub\Foundation\Support\Contracts\Reporter\Reporter;
 use Chronhub\Foundation\Tracker\TrackMessage;
-use Prophecy\Argument;
+use Chronhub\Chronicler\Exception\RuntimeException;
+use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
+use Chronhub\Chronicler\Support\Contracts\Chronicler;
+use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
+use Chronhub\Chronicler\Exception\InvalidArgumentException;
+use Chronhub\Foundation\Support\Contracts\Reporter\Reporter;
+use Chronhub\Chronicler\Support\Contracts\InMemoryChronicler;
+use Chronhub\Chronicler\Support\Contracts\TransactionalChronicler;
+use Chronhub\Chronicler\Tracking\Subscribers\PublishTransactionalInMemoryEvents;
 
 final class PublishTransactionalInMemoryEventsTest extends TestCaseWithProphecy
 {

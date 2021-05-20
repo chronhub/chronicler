@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Driver\Connection\WriteLock;
 
-use Chronhub\Chronicler\Driver\Connection\WriteLock\NoWriteLock;
-use Chronhub\Chronicler\Tests\TestCase;
 use Generator;
+use Chronhub\Chronicler\Tests\TestCase;
+use Chronhub\Chronicler\Driver\Connection\WriteLock\NoWriteLock;
 
 /** @coversDefaultClass \Chronhub\Chronicler\Driver\Connection\WriteLock\NoWriteLock */
 final class NullWriteLockTest extends TestCase

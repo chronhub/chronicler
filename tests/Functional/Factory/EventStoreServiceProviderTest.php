@@ -1,15 +1,15 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Functional\Factory;
 
-use Chronhub\Chronicler\Factory\ChroniclerServiceProvider;
-use Chronhub\Chronicler\Factory\EventStoreServiceProvider;
-use Chronhub\Chronicler\Support\Contracts\Factory\ChroniclerManager;
-use Chronhub\Chronicler\Support\Contracts\Factory\RepositoryManager;
-use Chronhub\Chronicler\Support\Contracts\Support\JsonEncoder;
 use Chronhub\Chronicler\Support\Facade\Chronicle;
 use Chronhub\Chronicler\Tests\TestCaseWithOrchestra;
+use Chronhub\Chronicler\Factory\EventStoreServiceProvider;
+use Chronhub\Chronicler\Support\Contracts\Support\JsonEncoder;
+use Chronhub\Chronicler\Support\Contracts\Factory\ChroniclerManager;
+use Chronhub\Chronicler\Support\Contracts\Factory\RepositoryManager;
 
 /** @coversDefaultClass \Chronhub\Chronicler\Factory\EventStoreServiceProvider */
 final class EventStoreServiceProviderTest extends TestCaseWithOrchestra

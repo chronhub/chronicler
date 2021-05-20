@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Double;
 
-use Illuminate\Database\QueryException;
 use Throwable;
+use Illuminate\Database\QueryException;
 
 final class SomeQueryException extends QueryException
 {
@@ -12,7 +13,7 @@ final class SomeQueryException extends QueryException
     {
         parent::__construct('some sql', [], $previousException);
 
-        if ($previousException->getCode() === 0) {
+        if (0 === $previousException->getCode()) {
             $this->code = '00000';
         }
     }

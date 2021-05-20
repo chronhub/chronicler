@@ -1,17 +1,18 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Driver\Connection\Loader;
 
-use Chronhub\Chronicler\Driver\Connection\EventConverter;
-use Chronhub\Chronicler\Driver\Connection\Loader\CursorQueryLoader;
-use Chronhub\Chronicler\Stream\StreamName;
-use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
-use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
+use stdClass;
+use Prophecy\Prophecy\ObjectProphecy;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\LazyCollection;
-use Prophecy\Prophecy\ObjectProphecy;
-use stdClass;
+use Chronhub\Chronicler\Stream\StreamName;
+use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
+use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
+use Chronhub\Chronicler\Driver\Connection\EventConverter;
+use Chronhub\Chronicler\Driver\Connection\Loader\CursorQueryLoader;
 
 final class CursorQueryLoaderTest extends TestCaseWithProphecy
 {

@@ -1,17 +1,18 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Driver\Connection;
 
-use Chronhub\Chronicler\Driver\Connection\EventConverter;
-use Chronhub\Chronicler\Support\Contracts\Support\JsonEncoder;
-use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
-use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
-use Chronhub\Foundation\Message\Message;
-use Chronhub\Foundation\Support\Contracts\Message\Header;
-use Chronhub\Foundation\Support\Contracts\Message\MessageSerializer;
-use Prophecy\Prophecy\ObjectProphecy;
 use stdclass;
+use Prophecy\Prophecy\ObjectProphecy;
+use Chronhub\Foundation\Message\Message;
+use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
+use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
+use Chronhub\Chronicler\Driver\Connection\EventConverter;
+use Chronhub\Foundation\Support\Contracts\Message\Header;
+use Chronhub\Chronicler\Support\Contracts\Support\JsonEncoder;
+use Chronhub\Foundation\Support\Contracts\Message\MessageSerializer;
 
 /** @coversDefaultClass \Chronhub\Chronicler\Driver\Connection\EventConverter */
 final class EventConverterTest extends TestCaseWithProphecy
@@ -90,7 +91,7 @@ final class EventConverterTest extends TestCaseWithProphecy
             'created_at' => 'date_time',
             'event_id' => '1234',
             'event_type' => 'event_type',
-            'no' => 12
+            'no' => 12,
         ];
 
         $this->serializer->serializeMessage(new Message($event))->willReturn($data)->shouldBeCalled();
@@ -116,7 +117,7 @@ final class EventConverterTest extends TestCaseWithProphecy
         $data = [
             'content' => 'content',
             'headers' => 'headers',
-            'no' => 2
+            'no' => 2,
         ];
 
         $this->json->decode($event->content)->willReturn('content')->shouldBeCalled();

@@ -1,38 +1,39 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\BankAccount;
 
-use Chronhub\Chronicler\Driver\InMemory\InMemoryChronicler;
-use Chronhub\Chronicler\Driver\InMemory\InMemoryTransactionalChronicler;
-use Chronhub\Chronicler\Factory\ChroniclerServiceProvider;
+use Ramsey\Uuid\UuidInterface;
 use Chronhub\Chronicler\Stream\StreamName;
-use Chronhub\Chronicler\Support\BankAccount\Infrastructure\AccountChronicleStore;
-use Chronhub\Chronicler\Support\BankAccount\Infrastructure\CustomerChronicleStore;
-use Chronhub\Chronicler\Support\BankAccount\Model\Account\AccountCollection;
-use Chronhub\Chronicler\Support\BankAccount\Model\Account\AccountId;
-use Chronhub\Chronicler\Support\BankAccount\Model\Account\AccountRegistered;
-use Chronhub\Chronicler\Support\BankAccount\Model\Account\DepositMade;
-use Chronhub\Chronicler\Support\BankAccount\Model\Account\MakeDeposit;
-use Chronhub\Chronicler\Support\BankAccount\Model\Account\RegisterBankAccount;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerCollection;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerId;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerRegistered;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\RegisterCustomer;
+use Chronhub\Foundation\Support\Facade\Publish;
+use Illuminate\Contracts\Foundation\Application;
+use Chronhub\Foundation\Aggregate\AggregateChanged;
+use Chronhub\Chronicler\Tests\TestCaseWithOrchestra;
 use Chronhub\Chronicler\Support\Contracts\Chronicler;
+use Chronhub\Foundation\Exception\MessageDispatchFailed;
+use Chronhub\Foundation\Support\Contracts\Message\Header;
+use Chronhub\Chronicler\Factory\ChroniclerServiceProvider;
+use Chronhub\Chronicler\Driver\InMemory\InMemoryChronicler;
+use Chronhub\Foundation\Support\Contracts\Clock\PointInTime;
+use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
+use Chronhub\Chronicler\Support\BankAccount\Model\Account\AccountId;
 use Chronhub\Chronicler\Support\Contracts\Factory\ChroniclerManager;
 use Chronhub\Chronicler\Support\Contracts\Factory\RepositoryManager;
 use Chronhub\Chronicler\Tests\BankAccount\Util\ProvideInMemorySetup;
-use Chronhub\Chronicler\Tests\TestCaseWithOrchestra;
-use Chronhub\Foundation\Aggregate\AggregateChanged;
-use Chronhub\Foundation\Exception\MessageDispatchFailed;
 use Chronhub\Foundation\Reporter\Services\FoundationServiceProvider;
-use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
-use Chronhub\Foundation\Support\Contracts\Clock\PointInTime;
-use Chronhub\Foundation\Support\Contracts\Message\Header;
-use Chronhub\Foundation\Support\Facade\Publish;
-use Illuminate\Contracts\Foundation\Application;
-use Ramsey\Uuid\UuidInterface;
+use Chronhub\Chronicler\Support\BankAccount\Model\Account\DepositMade;
+use Chronhub\Chronicler\Support\BankAccount\Model\Account\MakeDeposit;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerId;
+use Chronhub\Chronicler\Driver\InMemory\InMemoryTransactionalChronicler;
+use Chronhub\Chronicler\Support\BankAccount\Model\Account\AccountCollection;
+use Chronhub\Chronicler\Support\BankAccount\Model\Account\AccountRegistered;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\RegisterCustomer;
+use Chronhub\Chronicler\Support\BankAccount\Model\Account\RegisterBankAccount;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerCollection;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerRegistered;
+use Chronhub\Chronicler\Support\BankAccount\Infrastructure\AccountChronicleStore;
+use Chronhub\Chronicler\Support\BankAccount\Infrastructure\CustomerChronicleStore;
 use function class_exists;
 
 abstract class AbstractBankAccountTest extends TestCaseWithOrchestra
@@ -62,11 +63,11 @@ abstract class AbstractBankAccountTest extends TestCaseWithOrchestra
 
         $this->dispatchCommands();
 
-        $this->testCustomerAggregate();
+        $this->test_customer_aggregate();
 
-        $this->testAccountAggregate();
+        $this->test_account_aggregate();
 
-        $this->testChroniclerEvents();
+        $this->test_chronicler_events();
 
         if ($this->chronicler instanceof InMemoryChronicler) {
             $recordedEvents = $this->chronicler->pullCachedRecordedEvents();
@@ -98,21 +99,21 @@ abstract class AbstractBankAccountTest extends TestCaseWithOrchestra
             Publish::command($registerBankAccount);
 
             $num = 10;
-            while ($num !== 0) {
+            while (0 !== $num) {
                 $makeDeposit = MakeDeposit::withCustomer(
                     $this->customerId->toString(), $this->accountId->toString(), 100
                 );
 
                 Publish::command($makeDeposit);
 
-                $num--;
+                --$num;
             }
         } catch (MessageDispatchFailed $exception) {
             throw $exception->getPrevious();
         }
     }
 
-    private function testCustomerAggregate(): void
+    private function test_customer_aggregate(): void
     {
         $customer = $this->customerRepository->get($this->customerId);
 
@@ -122,7 +123,7 @@ abstract class AbstractBankAccountTest extends TestCaseWithOrchestra
         $this->assertEquals('steph bug', $customer->name()->toString());
     }
 
-    private function testAccountAggregate(): void
+    private function test_account_aggregate(): void
     {
         $account = $this->accountRepository->get($this->accountId);
 
@@ -130,26 +131,26 @@ abstract class AbstractBankAccountTest extends TestCaseWithOrchestra
         $this->assertEquals($this->accountId, $account->aggregateId());
         $this->assertEquals($this->accountId, $account->accountId());
         $this->assertEquals(11, $account->version());
-        $this->assertEquals(1000, $account->balance());
+        $this->assertEquals(1000, $account->balance()->available());
     }
 
-    private function testChroniclerEvents(): void
+    private function test_chronicler_events(): void
     {
         $customerEvents = iterator_to_array($this->chronicler->retrieveAll($this->customerStream, $this->customerId));
 
         $this->assertCount(1, $customerEvents);
         $this->assertInstanceOf(CustomerRegistered::class, $customerEvents[0]);
-        $this->testAggregateChangedHeader($customerEvents[0]);
+        $this->test_aggregate_changed_header($customerEvents[0]);
 
         $accountEvents = iterator_to_array($this->chronicler->retrieveAll($this->accountStream, $this->accountId));
 
         $this->assertCount(11, $accountEvents);
         $this->assertInstanceOf(AccountRegistered::class, $accountEvents[0]);
         $this->assertInstanceOf(DepositMade::class, $accountEvents[10]);
-        $this->testAggregateChangedHeader($accountEvents[0]);
+        $this->test_aggregate_changed_header($accountEvents[0]);
     }
 
-    private function testAggregateChangedHeader(AggregateChanged $event): void
+    private function test_aggregate_changed_header(AggregateChanged $event): void
     {
         $this->assertArrayHasKey(Header::EVENT_ID, $event->headers());
         $this->assertInstanceOf(UuidInterface::class, $event->header(Header::EVENT_ID));
@@ -169,7 +170,6 @@ abstract class AbstractBankAccountTest extends TestCaseWithOrchestra
         $this->assertArrayHasKey(Header::INTERNAL_POSITION, $event->headers());
     }
 
-
     protected function getPackageProviders($app): array
     {
         return [
@@ -178,7 +178,7 @@ abstract class AbstractBankAccountTest extends TestCaseWithOrchestra
         ];
     }
 
-    protected function defineEnvironment($app)
+    protected function defineEnvironment($app): void
     {
         $this->setupConfiguration($app);
 

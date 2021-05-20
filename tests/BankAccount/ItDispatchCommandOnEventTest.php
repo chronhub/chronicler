@@ -1,39 +1,40 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\BankAccount;
 
-use Chronhub\Chronicler\Driver\InMemory\InMemoryChronicler;
-use Chronhub\Chronicler\Driver\InMemory\InMemoryTransactionalChronicler;
-use Chronhub\Chronicler\Factory\ChroniclerServiceProvider;
+use Ramsey\Uuid\UuidInterface;
 use Chronhub\Chronicler\Stream\Stream;
 use Chronhub\Chronicler\Stream\StreamName;
-use Chronhub\Chronicler\Support\BankAccount\Infrastructure\CustomerChronicleStore;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\ChangeCustomerName;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\ChangeCustomerNameHandler;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerCollection;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerId;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerNameChanged;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerRegistered;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\RegisterCustomer;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\RegisterCustomerHandler;
+use Chronhub\Foundation\Support\Facade\Publish;
+use Illuminate\Contracts\Foundation\Application;
+use Chronhub\Foundation\Aggregate\AggregateChanged;
+use Chronhub\Chronicler\Tests\TestCaseWithOrchestra;
 use Chronhub\Chronicler\Support\Contracts\Chronicler;
+use Chronhub\Foundation\Exception\MessageDispatchFailed;
+use Chronhub\Foundation\Reporter\Subscribers\HandleEvent;
+use Chronhub\Foundation\Support\Contracts\Message\Header;
+use Chronhub\Chronicler\Factory\ChroniclerServiceProvider;
+use Chronhub\Chronicler\Driver\InMemory\InMemoryChronicler;
+use Chronhub\Foundation\Reporter\Subscribers\HandleCommand;
+use Chronhub\Foundation\Support\Contracts\Clock\PointInTime;
+use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Chronicler\Support\Contracts\Factory\ChroniclerManager;
 use Chronhub\Chronicler\Support\Contracts\Factory\RepositoryManager;
 use Chronhub\Chronicler\Tests\BankAccount\Util\ProvideInMemorySetup;
-use Chronhub\Chronicler\Tests\TestCaseWithOrchestra;
-use Chronhub\Chronicler\Tracking\Subscribers\TransactionalHandlerSubscriber;
-use Chronhub\Foundation\Aggregate\AggregateChanged;
-use Chronhub\Foundation\Exception\MessageDispatchFailed;
 use Chronhub\Foundation\Reporter\Services\FoundationServiceProvider;
-use Chronhub\Foundation\Reporter\Subscribers\HandleCommand;
-use Chronhub\Foundation\Reporter\Subscribers\HandleEvent;
-use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
-use Chronhub\Foundation\Support\Contracts\Clock\PointInTime;
-use Chronhub\Foundation\Support\Contracts\Message\Header;
-use Chronhub\Foundation\Support\Facade\Publish;
-use Illuminate\Contracts\Foundation\Application;
-use Ramsey\Uuid\UuidInterface;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerId;
+use Chronhub\Chronicler\Driver\InMemory\InMemoryTransactionalChronicler;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\RegisterCustomer;
+use Chronhub\Chronicler\Tracking\Subscribers\TransactionalHandlerSubscriber;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\ChangeCustomerName;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerCollection;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerRegistered;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerNameChanged;
+use Chronhub\Chronicler\Support\BankAccount\Infrastructure\CustomerChronicleStore;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\RegisterCustomerHandler;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\ChangeCustomerNameHandler;
 
 final class ItDispatchCommandOnEventTest extends TestCaseWithOrchestra
 {
@@ -58,9 +59,9 @@ final class ItDispatchCommandOnEventTest extends TestCaseWithOrchestra
         $this->assertTrue($this->customerRegistered);
         $this->assertTrue($this->customerNameChanged);
 
-        $this->testCustomerAggregate();
+        $this->test_customer_aggregate();
 
-        $this->testChroniclerEvents();
+        $this->test_chronicler_events();
     }
 
     private function dispatchCommands(): void
@@ -76,7 +77,7 @@ final class ItDispatchCommandOnEventTest extends TestCaseWithOrchestra
         }
     }
 
-    private function testCustomerAggregate(): void
+    private function test_customer_aggregate(): void
     {
         $customer = $this->customerRepository->get($this->customerId);
 
@@ -86,16 +87,16 @@ final class ItDispatchCommandOnEventTest extends TestCaseWithOrchestra
         $this->assertEquals('walter white', $customer->name()->toString());
     }
 
-    private function testChroniclerEvents(): void
+    private function test_chronicler_events(): void
     {
         $customerEvents = iterator_to_array($this->chronicler->retrieveAll($this->customerStream, $this->customerId));
 
         $this->assertCount(2, $customerEvents);
         $this->assertInstanceOf(CustomerRegistered::class, $customerEvents[0]);
-        $this->testAggregateChangedHeader($customerEvents[0]);
+        $this->test_aggregate_changed_header($customerEvents[0]);
     }
 
-    private function testAggregateChangedHeader(AggregateChanged $event): void
+    private function test_aggregate_changed_header(AggregateChanged $event): void
     {
         $this->assertArrayHasKey(Header::EVENT_ID, $event->headers());
         $this->assertInstanceOf(UuidInterface::class, $event->header(Header::EVENT_ID));
@@ -176,13 +177,13 @@ final class ItDispatchCommandOnEventTest extends TestCaseWithOrchestra
                 'decorators'  => [],
                 'subscribers' => [
                     HandleCommand::class,
-                    TransactionalHandlerSubscriber::class
+                    TransactionalHandlerSubscriber::class,
                 ],
             ],
             'map'            => [
                 'register-customer'    => RegisterCustomerHandler::class,
                 'change-customer-name' => ChangeCustomerNameHandler::class,
-            ]
+            ],
         ]);
 
         $app['config']->set('reporter.reporting.event.default', [
@@ -192,7 +193,7 @@ final class ItDispatchCommandOnEventTest extends TestCaseWithOrchestra
             ],
             'map'            => [
                 'customer-registered'   => [
-                    function (CustomerRegistered $event) {
+                    function (CustomerRegistered $event): void {
                         $this->customerRegistered = true;
 
                         Publish::command(
@@ -203,12 +204,12 @@ final class ItDispatchCommandOnEventTest extends TestCaseWithOrchestra
                     },
                 ],
                 'customer-name-changed' => [
-                    function (CustomerNameChanged $event) {
+                    function (CustomerNameChanged $event): void {
                         $this->customerNameChanged = true;
                         $this->assertEquals('walter white', $event->newCustomerName()->toString());
                         $this->assertEquals('steph bug', $event->oldCustomerName()->toString());
-                    }],
-            ]
+                    }, ],
+            ],
         ]);
 
         $this->provideInMemoryConfig($app, 'eventable_transactional_in_memory');

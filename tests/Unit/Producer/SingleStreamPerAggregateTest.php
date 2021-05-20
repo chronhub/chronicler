@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Producer;
@@ -9,6 +10,7 @@ use Chronhub\Chronicler\Stream\StreamName;
 use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
 use Chronhub\Chronicler\Tests\TestCase;
 use Chronhub\Foundation\Aggregate\GenericAggregateId;
+use Chronhub\Foundation\Message\DomainEvent;
 use Chronhub\Foundation\Support\Contracts\Message\Header;
 use Generator;
 
@@ -33,7 +35,6 @@ final class SingleStreamPerAggregateTest extends TestCase
     /**
      * @test
      * @dataProvider provideEvents
-     *
      */
     public function it_produce_stream(iterable $events): void
     {
@@ -57,9 +58,11 @@ final class SingleStreamPerAggregateTest extends TestCase
 
         $streamProducer = new SingleStreamPerAggregate($streamName);
 
-        $this->assertFalse($streamProducer->isFirstCommit(
-            SomeDomainEvent::fromContent(['steph' => 'bug'])->withHeader(Header::AGGREGATE_VERSION,1)
-        ));
+        /** @var DomainEvent $event */
+        $event = SomeDomainEvent::fromContent(['steph' => 'bug'])
+            ->withHeader(Header::AGGREGATE_VERSION, 1);
+
+        $this->assertFalse($streamProducer->isFirstCommit($event));
     }
 
     /**

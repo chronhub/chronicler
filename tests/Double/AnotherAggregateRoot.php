@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Double;
 
-use Chronhub\Foundation\Aggregate\HasAggregateRoot;
 use Chronhub\Foundation\Message\DomainEvent;
+use Chronhub\Foundation\Aggregate\HasAggregateRoot;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
 use function count;
@@ -12,7 +13,6 @@ use function count;
 final class AnotherAggregateRoot implements AggregateRoot
 {
     use HasAggregateRoot;
-
     use HasAggregateRoot;
 
     public static function create(AggregateId $aggregateId, array $events): self

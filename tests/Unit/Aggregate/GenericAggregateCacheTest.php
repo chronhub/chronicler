@@ -1,15 +1,16 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Aggregate;
 
-use Chronhub\Chronicler\Aggregate\GenericAggregateCache;
-use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
-use Chronhub\Foundation\Aggregate\GenericAggregateId;
-use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
 use Generator;
 use Illuminate\Cache\ArrayStore;
 use Illuminate\Contracts\Cache\Store;
+use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
+use Chronhub\Foundation\Aggregate\GenericAggregateId;
+use Chronhub\Chronicler\Aggregate\GenericAggregateCache;
+use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
 
 /** @coversDefaultClass \Chronhub\Chronicler\Aggregate\GenericAggregateCache */
 final class GenericAggregateCacheTest extends TestCaseWithProphecy
@@ -118,7 +119,7 @@ final class GenericAggregateCacheTest extends TestCaseWithProphecy
 
     private function provideAggregate(int $limit): Generator
     {
-        while ($limit !== 0) {
+        while (0 !== $limit) {
             $aggregateId = GenericAggregateId::create();
 
             $aggregateRoot = $this->prophesize(AggregateRoot::class);
@@ -126,7 +127,7 @@ final class GenericAggregateCacheTest extends TestCaseWithProphecy
 
             yield [$aggregateId, $aggregateRoot];
 
-            $limit--;
+            --$limit;
         }
     }
 }

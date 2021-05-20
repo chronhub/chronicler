@@ -1,19 +1,20 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\BankAccount\Util;
 
-use Chronhub\Chronicler\Support\BankAccount\Model\Account\Account;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\Customer;
-use Chronhub\Chronicler\Tracking\Subscribers\PublishEvents;
 use Chronhub\Chronicler\Tracking\TrackStream;
-use Chronhub\Chronicler\Tracking\TrackTransactionalStream;
-use Chronhub\Foundation\Reporter\ReportCommand;
 use Chronhub\Foundation\Reporter\ReportEvent;
 use Chronhub\Foundation\Reporter\ReportQuery;
-use Chronhub\Foundation\Support\Contracts\Reporter\Reporter;
-use Chronhub\Foundation\Support\Contracts\Reporter\ReporterManager;
+use Chronhub\Foundation\Reporter\ReportCommand;
 use Illuminate\Contracts\Foundation\Application;
+use Chronhub\Chronicler\Tracking\TrackTransactionalStream;
+use Chronhub\Chronicler\Tracking\Subscribers\PublishEvents;
+use Chronhub\Foundation\Support\Contracts\Reporter\Reporter;
+use Chronhub\Chronicler\Support\BankAccount\Model\Account\Account;
+use Chronhub\Foundation\Support\Contracts\Reporter\ReporterManager;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\Customer;
 
 trait ProvideInMemorySetup
 {
@@ -43,7 +44,7 @@ trait ProvideInMemorySetup
                 'provider' => 'in_memory',
                 'tracking' => [
                     'tracker_id'  => TrackStream::class,
-                    'subscribers' => [PublishEvents::class]
+                    'subscribers' => [PublishEvents::class],
                 ],
                 'options'  => [
                     'use_transaction'     => false,
@@ -57,7 +58,7 @@ trait ProvideInMemorySetup
                 'provider' => 'in_memory',
                 'tracking' => [
                     'tracker_id'  => TrackTransactionalStream::class,
-                    'subscribers' => [PublishEvents::class,]
+                    'subscribers' => [PublishEvents::class],
                 ],
                 'options'  => [
                     'use_transaction'     => false,
@@ -92,12 +93,12 @@ trait ProvideInMemorySetup
     protected function registerDefaultReporters(Application $app): void
     {
         $app->bind(ReportCommand::class,
-            fn(Application $app): Reporter => $app[ReporterManager::class]->command());
+            fn (Application $app): Reporter => $app[ReporterManager::class]->command());
 
         $app->bind(ReportEvent::class,
-            fn(Application $app): Reporter => $app[ReporterManager::class]->event());
+            fn (Application $app): Reporter => $app[ReporterManager::class]->event());
 
         $app->bind(ReportQuery::class,
-            fn(Application $app): Reporter => $app[ReporterManager::class]->query());
+            fn (Application $app): Reporter => $app[ReporterManager::class]->query());
     }
 }

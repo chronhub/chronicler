@@ -1,17 +1,18 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Driver\Connection\Loader;
 
-use Chronhub\Chronicler\Driver\Connection\EventConverter;
-use Chronhub\Chronicler\Driver\Connection\Loader\GetQueryLoader;
-use Chronhub\Chronicler\Stream\StreamName;
-use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
-use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
-use Illuminate\Database\Query\Builder;
+use stdClass;
 use Illuminate\Support\Collection;
 use Prophecy\Prophecy\ObjectProphecy;
-use stdClass;
+use Illuminate\Database\Query\Builder;
+use Chronhub\Chronicler\Stream\StreamName;
+use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
+use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
+use Chronhub\Chronicler\Driver\Connection\EventConverter;
+use Chronhub\Chronicler\Driver\Connection\Loader\GetQueryLoader;
 
 final class GetQueryLoaderTest extends TestCaseWithProphecy
 {

@@ -74,7 +74,7 @@ return [
                 'use_event_decorator' => true
             ],
 
-            'scope'        => '\Chronhub\Chronicler\Driver\Connection\Pgsql\PgsqlConnectionQueryScope::class',
+            'scope'        => \Chronhub\Chronicler\Driver\Connection\Scope\PgsqlQueryScope::class,
             'strategy'     => 'default',
             'provider'     => 'eloquent',
             'query_loader' => \Chronhub\Chronicler\Driver\Connection\Loader\LazyQueryLoader::class

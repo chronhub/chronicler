@@ -1,17 +1,18 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit;
 
-use Chronhub\Chronicler\Exception\TransactionAlreadyStarted;
-use Chronhub\Chronicler\Exception\TransactionNotStarted;
-use Chronhub\Chronicler\GenericTransactionalEventChronicler;
-use Chronhub\Chronicler\Support\Contracts\Tracking\ContextualStream;
-use Chronhub\Chronicler\Support\Contracts\TransactionalChronicler;
-use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
-use Chronhub\Chronicler\Tracking\TrackTransactionalStream;
 use Generator;
 use Prophecy\Prophecy\ObjectProphecy;
+use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
+use Chronhub\Chronicler\Exception\TransactionNotStarted;
+use Chronhub\Chronicler\Tracking\TrackTransactionalStream;
+use Chronhub\Chronicler\Exception\TransactionAlreadyStarted;
+use Chronhub\Chronicler\GenericTransactionalEventChronicler;
+use Chronhub\Chronicler\Support\Contracts\TransactionalChronicler;
+use Chronhub\Chronicler\Support\Contracts\Tracking\ContextualStream;
 
 /** @coversDefaultClass \Chronhub\Chronicler\GenericTransactionalEventChronicler */
 /** @coversDefaultClass \Chronhub\Chronicler\ProvideEventsChronicle */
@@ -143,7 +144,6 @@ final class GenericTransactionalEventChroniclerTest extends TestCaseWithProphecy
     /**
      * @test
      * @dataProvider provideBoolean
-     * @param bool $inTransaction
      */
     public function it_check_if_in_transaction(bool $inTransaction): void
     {
@@ -164,7 +164,7 @@ final class GenericTransactionalEventChroniclerTest extends TestCaseWithProphecy
      */
     public function it_send_callback_to_transaction(): void
     {
-        $callback = function () { };
+        $callback = function (): void { };
 
         $this->chronicler->transactional($callback)->shouldBeCalled();
 

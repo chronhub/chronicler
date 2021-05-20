@@ -1,17 +1,18 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Producer;
 
-use Chronhub\Chronicler\Producer\OneStreamPerAggregate;
-use Chronhub\Chronicler\Stream\Stream;
-use Chronhub\Chronicler\Stream\StreamName;
-use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
-use Chronhub\Chronicler\Tests\TestCase;
-use Chronhub\Foundation\Aggregate\GenericAggregateId;
-use Chronhub\Foundation\Message\DomainEvent;
-use Chronhub\Foundation\Support\Contracts\Message\Header;
 use Generator;
+use Chronhub\Chronicler\Stream\Stream;
+use Chronhub\Chronicler\Tests\TestCase;
+use Chronhub\Chronicler\Stream\StreamName;
+use Chronhub\Foundation\Message\DomainEvent;
+use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
+use Chronhub\Foundation\Aggregate\GenericAggregateId;
+use Chronhub\Chronicler\Producer\OneStreamPerAggregate;
+use Chronhub\Foundation\Support\Contracts\Message\Header;
 
 /** @coversDefaultClass \Chronhub\Chronicler\Producer\OneStreamPerAggregate */
 final class OneStreamPerAggregateTest extends TestCase
@@ -86,19 +87,19 @@ final class OneStreamPerAggregateTest extends TestCase
         yield [
             SomeDomainEvent::fromContent(['steph' => 'bug'])
                 ->withHeader(Header::AGGREGATE_VERSION, 1),
-            true
+            true,
         ];
 
         yield [
             SomeDomainEvent::fromContent(['steph' => 'bug'])
                 ->withHeader(Header::AGGREGATE_VERSION, 2),
-            false
+            false,
         ];
 
         yield [
             SomeDomainEvent::fromContent(['steph' => 'bug'])
                 ->withHeader(Header::AGGREGATE_VERSION, 20),
-            false
+            false,
         ];
     }
 }

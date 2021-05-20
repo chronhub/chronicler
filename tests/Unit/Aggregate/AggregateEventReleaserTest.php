@@ -1,21 +1,22 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Aggregate;
 
-use Chronhub\Chronicler\Aggregate\AggregateEventReleaser;
-use Chronhub\Chronicler\Tests\Double\SomeAggregateChanged;
-use Chronhub\Chronicler\Tests\Double\SomeAggregateRoot;
-use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
-use Chronhub\Foundation\Aggregate\GenericAggregateId;
-use Chronhub\Foundation\Message\Message;
-use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
-use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
-use Chronhub\Foundation\Support\Contracts\Message\Header;
-use Chronhub\Foundation\Support\Contracts\Message\MessageDecorator;
-use Chronhub\Foundation\Support\NoOpMessageDecorator;
 use Generator;
 use Prophecy\Argument;
+use Chronhub\Foundation\Message\Message;
+use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
+use Chronhub\Foundation\Aggregate\GenericAggregateId;
+use Chronhub\Foundation\Support\NoOpMessageDecorator;
+use Chronhub\Chronicler\Tests\Double\SomeAggregateRoot;
+use Chronhub\Chronicler\Aggregate\AggregateEventReleaser;
+use Chronhub\Foundation\Support\Contracts\Message\Header;
+use Chronhub\Chronicler\Tests\Double\SomeAggregateChanged;
+use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
+use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
+use Chronhub\Foundation\Support\Contracts\Message\MessageDecorator;
 use function reset;
 
 /** @coversDefaultClass \Chronhub\Chronicler\Aggregate\AggregateEventReleaser */
@@ -121,10 +122,10 @@ final class AggregateEventReleaserTest extends TestCaseWithProphecy
     {
         $return = $limit;
 
-        while ($limit !== 0) {
+        while (0 !== $limit) {
             yield SomeAggregateChanged::withData($aggregateId, []);
 
-            $limit--;
+            --$limit;
         }
 
         return $return;

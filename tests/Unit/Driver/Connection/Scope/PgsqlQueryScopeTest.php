@@ -1,13 +1,14 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Driver\Connection\Scope;
 
-use Chronhub\Chronicler\Driver\Connection\Scope\PgsqlQueryScope;
-use Chronhub\Chronicler\Exception\InvalidArgumentException;
-use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
 use Generator;
 use Illuminate\Database\Query\Builder;
+use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
+use Chronhub\Chronicler\Exception\InvalidArgumentException;
+use Chronhub\Chronicler\Driver\Connection\Scope\PgsqlQueryScope;
 
 final class PgsqlQueryScopeTest extends TestCaseWithProphecy
 {
@@ -47,7 +48,6 @@ final class PgsqlQueryScopeTest extends TestCaseWithProphecy
     /**
      * @test
      * @dataProvider provideInvalidAggregateVersion
-     * @param int $invalidVersion
      */
     public function it_raise_exception_if_current_version_less_than_0(int $invalidVersion): void
     {

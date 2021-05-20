@@ -1,23 +1,24 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Driver\Connection\Loader;
 
-use Chronhub\Chronicler\Driver\Connection\EventConverter;
-use Chronhub\Chronicler\Driver\Connection\Loader\StreamEventLoader;
-use Chronhub\Chronicler\Exception\QueryFailure;
-use Chronhub\Chronicler\Exception\RuntimeException;
-use Chronhub\Chronicler\Exception\StreamNotFound;
+use stdClass;
+use Prophecy\Argument;
+use Illuminate\Support\Collection;
+use Prophecy\Prophecy\ObjectProphecy;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\LazyCollection;
 use Chronhub\Chronicler\Stream\StreamName;
+use Chronhub\Chronicler\Exception\QueryFailure;
+use Chronhub\Chronicler\Exception\StreamNotFound;
+use Chronhub\Chronicler\Exception\RuntimeException;
+use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
 use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
 use Chronhub\Chronicler\Tests\Double\SomeQueryException;
-use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
-use Illuminate\Database\Query\Builder;
-use Illuminate\Support\Collection;
-use Illuminate\Support\LazyCollection;
-use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
-use stdClass;
+use Chronhub\Chronicler\Driver\Connection\EventConverter;
+use Chronhub\Chronicler\Driver\Connection\Loader\StreamEventLoader;
 
 /** @coversDefaultClass \Chronhub\Chronicler\Driver\Connection\Loader\StreamEventLoader */
 final class StreamEventLoaderTest extends TestCaseWithProphecy
@@ -116,10 +117,8 @@ final class StreamEventLoaderTest extends TestCaseWithProphecy
         $eventConverter = $this->eventConverter->reveal();
 
         return new class($eventConverter) extends StreamEventLoader {
-
             public function __construct(protected EventConverter $eventConverter)
             {
-                //
             }
 
             protected function generateFrom(Builder $builder, StreamName $StreamName): Collection|LazyCollection

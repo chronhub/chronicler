@@ -1,14 +1,15 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Functional\Factory;
 
-use Chronhub\Chronicler\Aggregate\GenericAggregateRepository;
 use Chronhub\Chronicler\Exception\RuntimeException;
+use Chronhub\Chronicler\Tests\TestCaseWithOrchestra;
 use Chronhub\Chronicler\Factory\ChroniclerServiceProvider;
+use Chronhub\Chronicler\Aggregate\GenericAggregateRepository;
 use Chronhub\Chronicler\Support\BankAccount\Model\Customer\Customer;
 use Chronhub\Chronicler\Support\Contracts\Factory\RepositoryManager;
-use Chronhub\Chronicler\Tests\TestCaseWithOrchestra;
 
 /** @coversDefaultClass \Chronhub\Foundation\Reporter\Services\DefaultReporterManager */
 final class DefaultRepositoryManagerTest extends TestCaseWithOrchestra
@@ -38,7 +39,7 @@ final class DefaultRepositoryManagerTest extends TestCaseWithOrchestra
                 'my_stream_name' => [
                     'aggregate_type' => [
                         'root' => 'AG class name',
-                        'children' => []
+                        'children' => [],
                     ],
                     'chronicler' => 'default',
                     'cache' => [
@@ -56,7 +57,7 @@ final class DefaultRepositoryManagerTest extends TestCaseWithOrchestra
                             'name' => 'default',
                             'options' => 'lazy',
                         ],
-                    ]
+                    ],
                 ],
             ],
         ];
@@ -85,8 +86,8 @@ final class DefaultRepositoryManagerTest extends TestCaseWithOrchestra
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Invalid repository config for stream name invalid_stream_name');
 
-        $this->app['config']->set('chronicler.repositories',[
-            'customer_stream' => []
+        $this->app['config']->set('chronicler.repositories', [
+            'customer_stream' => [],
         ]);
 
         $this->app[RepositoryManager::class]->create('invalid_stream_name');
@@ -100,11 +101,11 @@ final class DefaultRepositoryManagerTest extends TestCaseWithOrchestra
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Invalid repository config for stream name invalid_stream_name');
 
-        $this->app['config']->set('chronicler.repositories',[
+        $this->app['config']->set('chronicler.repositories', [
             'customer_stream' => [],
             'aggregate_type' => [
                 'root' => 'AG class name',
-                'children' => []
+                'children' => [],
             ],
         ]);
 
@@ -119,14 +120,14 @@ final class DefaultRepositoryManagerTest extends TestCaseWithOrchestra
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('Chronicle store connection invalid_driver not found');
 
-        $this->app['config']->set('chronicler.repositories',[
+        $this->app['config']->set('chronicler.repositories', [
             'customer_stream' => [
                 'chronicler' => 'invalid_driver',
                 'aggregate_type' => [
                     'root' => Customer::class,
-                    'children' => []
+                    'children' => [],
                 ],
-            ]
+            ],
         ]);
 
         $this->app[RepositoryManager::class]->create('customer_stream');
@@ -137,14 +138,14 @@ final class DefaultRepositoryManagerTest extends TestCaseWithOrchestra
      */
     public function it_create_aggregate_repository_with_array_aggregate_type(): void
     {
-        $this->app['config']->set('chronicler.repositories',[
+        $this->app['config']->set('chronicler.repositories', [
             'customer_stream' => [
                 'chronicler' => 'in_memory',
                 'aggregate_type' => [
                     'root' => Customer::class,
-                    'children' => []
+                    'children' => [],
                 ],
-            ]
+            ],
         ]);
 
         $repository = $this->app[RepositoryManager::class]->create('customer_stream');
@@ -157,11 +158,11 @@ final class DefaultRepositoryManagerTest extends TestCaseWithOrchestra
      */
     public function it_create_aggregate_repository(): void
     {
-        $this->app['config']->set('chronicler.repositories',[
+        $this->app['config']->set('chronicler.repositories', [
             'customer_stream' => [
                 'chronicler' => 'in_memory',
                 'aggregate_type' => Customer::class,
-            ]
+            ],
         ]);
 
         $repository = $this->app[RepositoryManager::class]->create('customer_stream');
@@ -174,11 +175,11 @@ final class DefaultRepositoryManagerTest extends TestCaseWithOrchestra
      */
     public function it_return_same_aggregate_repository_instance(): void
     {
-        $this->app['config']->set('chronicler.repositories',[
+        $this->app['config']->set('chronicler.repositories', [
             'customer_stream' => [
                 'chronicler' => 'in_memory',
                 'aggregate_type' => Customer::class,
-            ]
+            ],
         ]);
 
         $repository = $this->app[RepositoryManager::class]->create('customer_stream');

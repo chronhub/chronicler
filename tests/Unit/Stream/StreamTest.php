@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Chronhub\Chronicler\Tests\Unit\Stream;
 
+use Generator;
 use ArrayIterator;
 use Chronhub\Chronicler\Stream\Stream;
+use Illuminate\Support\LazyCollection;
+use Chronhub\Chronicler\Tests\TestCase;
 use Chronhub\Chronicler\Stream\StreamName;
 use Chronhub\Chronicler\Tests\Double\SomeCommand;
-use Chronhub\Chronicler\Tests\TestCase;
-use Generator;
-use Illuminate\Support\LazyCollection;
 
 /** @coversDefaultClass \Chronhub\Chronicler\Stream\Stream */
 class StreamTest extends TestCase
@@ -33,7 +35,6 @@ class StreamTest extends TestCase
 
     /**
      * @test
-     * @param iterable $iterable
      * @dataProvider provideIterableEvents
      */
     public function it_can_generate_events(iterable $iterable): void

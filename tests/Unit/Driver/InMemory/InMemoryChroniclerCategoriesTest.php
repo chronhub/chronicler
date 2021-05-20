@@ -1,24 +1,25 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Driver\InMemory;
 
-use Chronhub\Chronicler\Driver\InMemory\InMemoryChronicler;
-use Chronhub\Chronicler\Driver\InMemory\InMemoryEventStream;
-use Chronhub\Chronicler\Exception\StreamAlreadyExists;
-use Chronhub\Chronicler\Exception\StreamNotFound;
-use Chronhub\Chronicler\Stream\Stream;
-use Chronhub\Chronicler\Stream\StreamName;
-use Chronhub\Chronicler\Support\Contracts\Query\InMemoryQueryFilter;
-use Chronhub\Chronicler\Support\Contracts\Query\QueryFilter;
-use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
-use Chronhub\Chronicler\Tests\TestCase;
-use Chronhub\Foundation\Aggregate\GenericAggregateId;
-use Chronhub\Foundation\Message\DomainEvent;
-use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
-use Chronhub\Foundation\Support\Contracts\Message\Header;
 use Generator;
 use Illuminate\Support\Str;
+use Chronhub\Chronicler\Stream\Stream;
+use Chronhub\Chronicler\Tests\TestCase;
+use Chronhub\Chronicler\Stream\StreamName;
+use Chronhub\Foundation\Message\DomainEvent;
+use Chronhub\Chronicler\Exception\StreamNotFound;
+use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
+use Chronhub\Foundation\Aggregate\GenericAggregateId;
+use Chronhub\Chronicler\Exception\StreamAlreadyExists;
+use Chronhub\Foundation\Support\Contracts\Message\Header;
+use Chronhub\Chronicler\Driver\InMemory\InMemoryChronicler;
+use Chronhub\Chronicler\Driver\InMemory\InMemoryEventStream;
+use Chronhub\Chronicler\Support\Contracts\Query\QueryFilter;
+use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
+use Chronhub\Chronicler\Support\Contracts\Query\InMemoryQueryFilter;
 
 final class InMemoryChroniclerCategoriesTest extends TestCase
 {
@@ -111,7 +112,7 @@ final class InMemoryChroniclerCategoriesTest extends TestCase
     {
         $headers = [
             Header::AGGREGATE_VERSION => 12,
-            Header::AGGREGATE_ID      => $this->aggregateId->toString()
+            Header::AGGREGATE_ID      => $this->aggregateId->toString(),
         ];
 
         $event = SomeDomainEvent::fromContent(['password' => Str::random()])->withHeaders($headers);
@@ -166,7 +167,7 @@ final class InMemoryChroniclerCategoriesTest extends TestCase
     /**
      * @test
      */
-    public function it_raise_exception_when_deleting_stream_not_found()
+    public function it_raise_exception_when_deleting_stream_not_found(): void
     {
         $this->expectException(StreamNotFound::class);
 
@@ -176,7 +177,6 @@ final class InMemoryChroniclerCategoriesTest extends TestCase
     /**
      * @test
      * @dataProvider provideDirection
-     * @param string $direction
      */
     public function it_retrieve_all_stream_with_direction(string $direction): void
     {
@@ -215,7 +215,7 @@ final class InMemoryChroniclerCategoriesTest extends TestCase
         $headers = [
             Header::INTERNAL_POSITION => $currentVersion = 5,
             Header::AGGREGATE_VERSION => $currentVersion,
-            Header::AGGREGATE_ID      => $this->aggregateId
+            Header::AGGREGATE_ID      => $this->aggregateId,
         ];
 
         $event = SomeDomainEvent::fromContent(['password' => Str::random()])->withHeaders($headers);
@@ -337,7 +337,7 @@ final class InMemoryChroniclerCategoriesTest extends TestCase
                 {
                     return 'asc';
                 }
-            }, range(5, 10)
+            }, range(5, 10),
         ];
 
         yield [
@@ -354,7 +354,7 @@ final class InMemoryChroniclerCategoriesTest extends TestCase
                 {
                     return 'asc';
                 }
-            }, range(3, 5)
+            }, range(3, 5),
         ];
 
         yield [
@@ -371,7 +371,7 @@ final class InMemoryChroniclerCategoriesTest extends TestCase
                 {
                     return 'desc';
                 }
-            }, array_reverse(range(1, 4))
+            }, array_reverse(range(1, 4)),
         ];
     }
 
@@ -379,16 +379,16 @@ final class InMemoryChroniclerCategoriesTest extends TestCase
     {
         $version = 0;
 
-        while ($limit !== 0) {
+        while (0 !== $limit) {
             $headers = [
                 Header::INTERNAL_POSITION => $currentVersion = ++$version,
                 Header::AGGREGATE_VERSION => $currentVersion,
-                Header::AGGREGATE_ID      => $aggregateId->toString()
+                Header::AGGREGATE_ID      => $aggregateId->toString(),
             ];
 
             yield SomeDomainEvent::fromContent(['password' => Str::random()])->withHeaders($headers);
 
-            $limit--;
+            --$limit;
         }
     }
 }

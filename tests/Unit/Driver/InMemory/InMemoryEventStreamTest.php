@@ -1,10 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Driver\InMemory;
 
-use Chronhub\Chronicler\Driver\InMemory\InMemoryEventStream;
 use Chronhub\Chronicler\Tests\TestCase;
+use Chronhub\Chronicler\Driver\InMemory\InMemoryEventStream;
 
 final class InMemoryEventStreamTest extends TestCase
 {

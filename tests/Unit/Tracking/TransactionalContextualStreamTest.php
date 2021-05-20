@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Tracking;
 
-use Chronhub\Chronicler\Exception\TransactionAlreadyStarted;
-use Chronhub\Chronicler\Exception\TransactionNotStarted;
 use Chronhub\Chronicler\Tests\TestCase;
+use Chronhub\Chronicler\Exception\TransactionNotStarted;
+use Chronhub\Chronicler\Exception\TransactionAlreadyStarted;
 use Chronhub\Chronicler\Tracking\TransactionalContextualStream;
 
 final class TransactionalContextualStreamTest extends TestCase
@@ -15,7 +16,7 @@ final class TransactionalContextualStreamTest extends TestCase
      */
     public function it_test_transaction_not_started(): void
     {
-        $exception = new TransactionNotStarted("transaction not started");
+        $exception = new TransactionNotStarted('transaction not started');
 
         $context = new TransactionalContextualStream(null);
 
@@ -33,7 +34,7 @@ final class TransactionalContextualStreamTest extends TestCase
      */
     public function it_test_transaction_already_started(): void
     {
-        $exception = new TransactionAlreadyStarted("transaction already started");
+        $exception = new TransactionAlreadyStarted('transaction already started');
 
         $context = new TransactionalContextualStream(null);
 

@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Driver\Connection\WriteLock;
 
-use Chronhub\Chronicler\Driver\Connection\WriteLock\PgsqlWriteLock;
-use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
 use Illuminate\Database\ConnectionInterface;
+use Chronhub\Chronicler\Tests\TestCaseWithProphecy;
+use Chronhub\Chronicler\Driver\Connection\WriteLock\PgsqlWriteLock;
 
 /** @coversDefaultClass \Chronhub\Chronicler\Driver\Connection\WriteLock\PgsqlWriteLock */
 final class PgsqlWriteLockTest extends TestCaseWithProphecy
@@ -23,7 +24,6 @@ final class PgsqlWriteLockTest extends TestCaseWithProphecy
             ->statement('select pg_advisory_lock( hashtext(\'' . $lockName . '\') )')
             ->willReturn(true)
             ->shouldBeCalled();
-
 
         $lock = new PgsqlWriteLock($connection->reveal());
 
@@ -43,7 +43,6 @@ final class PgsqlWriteLockTest extends TestCaseWithProphecy
             ->statement('select pg_advisory_unlock( hashtext(\'' . $lockName . '\') )')
             ->willReturn(true)
             ->shouldBeCalled();
-
 
         $lock = new PgsqlWriteLock($connection->reveal());
 

@@ -1,37 +1,38 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\BankAccount;
 
-use Chronhub\Chronicler\Factory\ChroniclerServiceProvider;
 use Chronhub\Chronicler\Stream\Stream;
 use Chronhub\Chronicler\Stream\StreamName;
-use Chronhub\Chronicler\Support\BankAccount\Infrastructure\CustomerChronicleStore;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\ChangeCustomerName;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\ChangeCustomerNameHandler;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerCollection;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerId;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerNameChanged;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerRegistered;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\RegisterCustomer;
-use Chronhub\Chronicler\Support\BankAccount\Model\Customer\RegisterCustomerHandler;
+use Chronhub\Foundation\Message\DomainEvent;
+use Chronhub\Foundation\Message\DomainCommand;
+use Chronhub\Foundation\Support\Facade\Publish;
+use Illuminate\Contracts\Foundation\Application;
+use Chronhub\Chronicler\Tests\TestCaseWithOrchestra;
 use Chronhub\Chronicler\Support\Contracts\Chronicler;
+use Chronhub\Foundation\Exception\MessageDispatchFailed;
+use Chronhub\Foundation\Reporter\Subscribers\HandleEvent;
+use Chronhub\Foundation\Support\Contracts\Message\Header;
+use Chronhub\Chronicler\Factory\ChroniclerServiceProvider;
+use Chronhub\Foundation\Reporter\Subscribers\HandleCommand;
 use Chronhub\Chronicler\Support\Contracts\EventableChronicler;
+use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
+use Chronhub\Chronicler\Tracking\Subscribers\MarkCausationCommand;
 use Chronhub\Chronicler\Support\Contracts\Factory\ChroniclerManager;
 use Chronhub\Chronicler\Support\Contracts\Factory\RepositoryManager;
 use Chronhub\Chronicler\Tests\BankAccount\Util\ProvideInMemorySetup;
-use Chronhub\Chronicler\Tests\TestCaseWithOrchestra;
-use Chronhub\Chronicler\Tracking\Subscribers\MarkCausationCommand;
-use Chronhub\Foundation\Exception\MessageDispatchFailed;
-use Chronhub\Foundation\Message\DomainCommand;
-use Chronhub\Foundation\Message\DomainEvent;
 use Chronhub\Foundation\Reporter\Services\FoundationServiceProvider;
-use Chronhub\Foundation\Reporter\Subscribers\HandleCommand;
-use Chronhub\Foundation\Reporter\Subscribers\HandleEvent;
-use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
-use Chronhub\Foundation\Support\Contracts\Message\Header;
-use Chronhub\Foundation\Support\Facade\Publish;
-use Illuminate\Contracts\Foundation\Application;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerId;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\RegisterCustomer;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\ChangeCustomerName;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerCollection;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerRegistered;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerNameChanged;
+use Chronhub\Chronicler\Support\BankAccount\Infrastructure\CustomerChronicleStore;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\RegisterCustomerHandler;
+use Chronhub\Chronicler\Support\BankAccount\Model\Customer\ChangeCustomerNameHandler;
 
 final class ItDecorateHeaderWithCausationCommandTest extends TestCaseWithOrchestra
 {
@@ -45,7 +46,7 @@ final class ItDecorateHeaderWithCausationCommandTest extends TestCaseWithOrchest
     protected int $customerNameChanged = 0;
     protected array $commands = [
         'register' => null,
-        'names'    => []
+        'names'    => [],
     ];
 
     /**
@@ -57,7 +58,7 @@ final class ItDecorateHeaderWithCausationCommandTest extends TestCaseWithOrchest
 
         $this->dispatchCommands();
 
-        $this->testChroniclerEvents();
+        $this->test_chronicler_events();
 
         $this->assertTrue($this->customerRegistered);
 
@@ -83,28 +84,28 @@ final class ItDecorateHeaderWithCausationCommandTest extends TestCaseWithOrchest
         }
     }
 
-    private function testChroniclerEvents(): void
+    private function test_chronicler_events(): void
     {
         $customerEvents = iterator_to_array($this->chronicler->retrieveAll($this->customerStream, $this->customerId));
 
         $this->assertCount(3, $customerEvents);
 
         $this->assertInstanceOf(CustomerRegistered::class, $customerEvents[0]);
-        $this->testCausationRegister($customerEvents[0]);
+        $this->test_causation_register($customerEvents[0]);
 
         foreach ($this->commands['names'] as $key => $command) {
             $event = $customerEvents[$key + 1];
 
             $this->assertInstanceOf(CustomerNameChanged::class, $event);
-            $this->testCausationName($event, $command);
+            $this->test_causation_name($event, $command);
 
-            $key === 1
+            1 === $key
                 ? $this->assertEquals('walter white', $event->newCustomerName()->toString())
                 : $this->assertEquals('heisenberg', $event->newCustomerName()->toString());
         }
     }
 
-    private function testCausationRegister(DomainEvent $event): void
+    private function test_causation_register(DomainEvent $event): void
     {
         $this->assertArrayHasKey(Header::EVENT_CAUSATION_ID, $event->headers());
         $this->assertArrayHasKey(Header::EVENT_CAUSATION_TYPE, $event->headers());
@@ -120,7 +121,7 @@ final class ItDecorateHeaderWithCausationCommandTest extends TestCaseWithOrchest
         );
     }
 
-    private function testCausationName(DomainEvent $event, DomainCommand $command): void
+    private function test_causation_name(DomainEvent $event, DomainCommand $command): void
     {
         $this->assertArrayHasKey(Header::EVENT_CAUSATION_ID, $event->headers());
         $this->assertArrayHasKey(Header::EVENT_CAUSATION_TYPE, $event->headers());
@@ -209,7 +210,7 @@ final class ItDecorateHeaderWithCausationCommandTest extends TestCaseWithOrchest
 
                     app()->make(ChangeCustomerNameHandler::class)->command($command);
                 },
-            ]
+            ],
         ]);
 
         $app['config']->set('reporter.reporting.event.default', [
@@ -219,7 +220,7 @@ final class ItDecorateHeaderWithCausationCommandTest extends TestCaseWithOrchest
             ],
             'map'            => [
                 'customer-registered'   => [
-                    function (CustomerRegistered $event) {
+                    function (CustomerRegistered $event): void {
                         $this->customerRegistered = true;
                         Publish::command(
                             ChangeCustomerName::withCustomer(
@@ -229,10 +230,10 @@ final class ItDecorateHeaderWithCausationCommandTest extends TestCaseWithOrchest
                     },
                 ],
                 'customer-name-changed' => [
-                    function () {
-                        $this->customerNameChanged++;
-                    }],
-            ]
+                    function (): void {
+                        ++$this->customerNameChanged;
+                    }, ],
+            ],
         ]);
 
         $this->provideInMemoryConfig($app, 'eventable_in_memory');
