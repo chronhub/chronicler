@@ -13,13 +13,13 @@ final class WithdrawMade extends AggregateChanged
     public static function forUser(AccountId $accountId,
                                    CustomerId $customerId,
                                    int $withdraw,
-                                   int $oldBalance): self
+                                   Balance $oldBalance): self
     {
         return self::occur(
             $accountId->toString(),
             [
                 'customerId'  => $customerId->toString(),
-                'old_balance' => $oldBalance,
+                'old_balance' => $oldBalance->available(),
                 'withdraw'     => $withdraw,
             ]
         );
@@ -40,8 +40,8 @@ final class WithdrawMade extends AggregateChanged
         return $this->content['withdraw'];
     }
 
-    public function oldBalance(): int
+    public function oldBalance(): Balance
     {
-        return $this->content['old_balance'];
+        return Balance::startAt($this->content['old_balance']);
     }
 }

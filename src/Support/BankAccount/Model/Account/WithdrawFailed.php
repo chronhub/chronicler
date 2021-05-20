@@ -13,7 +13,7 @@ final class WithdrawFailed extends AggregateChanged
     public static function forUser(AccountId $accountId,
                                    CustomerId $customerId,
                                    int $withdraw,
-                                   int $balance,
+                                   Balance $balance,
                                    int $failures): self
     {
         return self::occur(
@@ -21,7 +21,7 @@ final class WithdrawFailed extends AggregateChanged
             [
                 'customerId' => $customerId->toString(),
                 'withdraw'   => $withdraw,
-                'balance'    => $balance,
+                'balance'    => $balance->available(),
                 'failures'   => $failures,
             ]
         );
@@ -37,9 +37,9 @@ final class WithdrawFailed extends AggregateChanged
         return AccountId::fromString($this->aggregateId());
     }
 
-    public function balance(): int
+    public function balance(): Balance
     {
-        return $this->content['balance'];
+        return Balance::startAt($this->content['balance']);
     }
 
     public function withdraw(): int
