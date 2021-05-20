@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\Unit\Producer;
 
-use Chronhub\Chronicler\Producer\SingleStreamPerAggregate;
-use Chronhub\Chronicler\Stream\Stream;
-use Chronhub\Chronicler\Stream\StreamName;
-use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
-use Chronhub\Chronicler\Tests\TestCase;
-use Chronhub\Foundation\Aggregate\GenericAggregateId;
-use Chronhub\Foundation\Message\DomainEvent;
-use Chronhub\Foundation\Support\Contracts\Message\Header;
 use Generator;
+use Chronhub\Chronicler\Stream\Stream;
+use Chronhub\Chronicler\Tests\TestCase;
+use Chronhub\Chronicler\Stream\StreamName;
+use Chronhub\Foundation\Message\DomainEvent;
+use Chronhub\Chronicler\Tests\Double\SomeDomainEvent;
+use Chronhub\Foundation\Aggregate\GenericAggregateId;
+use Chronhub\Foundation\Support\Contracts\Message\Header;
+use Chronhub\Chronicler\Producer\SingleStreamPerAggregate;
 
 /** @coversDefaultClass \Chronhub\Chronicler\Producer\SingleStreamPerAggregate */
 final class SingleStreamPerAggregateTest extends TestCase
