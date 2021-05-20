@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Tests\BankAccount;
 
-use Ramsey\Uuid\UuidInterface;
 use Chronhub\Chronicler\Stream\Stream;
 use Chronhub\Chronicler\Stream\StreamName;
 use Chronhub\Foundation\Support\Facade\Publish;
@@ -18,7 +17,6 @@ use Chronhub\Foundation\Support\Contracts\Message\Header;
 use Chronhub\Chronicler\Factory\ChroniclerServiceProvider;
 use Chronhub\Chronicler\Driver\InMemory\InMemoryChronicler;
 use Chronhub\Foundation\Reporter\Subscribers\HandleCommand;
-use Chronhub\Foundation\Support\Contracts\Clock\PointInTime;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Chronicler\Support\Contracts\Factory\ChroniclerManager;
 use Chronhub\Chronicler\Support\Contracts\Factory\RepositoryManager;
@@ -99,13 +97,13 @@ final class ItDispatchCommandOnEventTest extends TestCaseWithOrchestra
     private function test_aggregate_changed_header(AggregateChanged $event): void
     {
         $this->assertArrayHasKey(Header::EVENT_ID, $event->headers());
-        $this->assertInstanceOf(UuidInterface::class, $event->header(Header::EVENT_ID));
+        $this->assertIsString($event->header(Header::EVENT_ID));
 
         $this->assertArrayHasKey(Header::EVENT_TYPE, $event->headers());
         $this->assertTrue(class_exists($event->header(Header::EVENT_TYPE)));
 
         $this->assertArrayHasKey(Header::EVENT_TIME, $event->headers());
-        $this->assertInstanceOf(PointInTime::class, $event->header(Header::EVENT_TIME));
+        $this->assertIsString($event->header(Header::EVENT_TIME));
 
         $this->assertArrayHasKey(Header::AGGREGATE_ID, $event->headers());
 

@@ -111,7 +111,7 @@ final class ItDecorateHeaderWithCausationCommandTest extends TestCaseWithOrchest
         $this->assertArrayHasKey(Header::EVENT_CAUSATION_TYPE, $event->headers());
 
         $this->assertEquals(
-            $this->commands['register']->header(Header::EVENT_ID)->toString(),
+            $this->commands['register']->header(Header::EVENT_ID),
             $event->Header(Header::EVENT_CAUSATION_ID)
         );
 
@@ -127,7 +127,7 @@ final class ItDecorateHeaderWithCausationCommandTest extends TestCaseWithOrchest
         $this->assertArrayHasKey(Header::EVENT_CAUSATION_TYPE, $event->headers());
 
         $this->assertEquals(
-            $command->header(Header::EVENT_ID)->toString(),
+            $command->header(Header::EVENT_ID),
             $event->Header(Header::EVENT_CAUSATION_ID)
         );
 
