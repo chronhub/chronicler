@@ -19,7 +19,7 @@ final class AccountSuspended extends AggregateChanged
             $accountId->toString(),
             [
                 'customer_id'    => $customerId->toString(),
-                'current_status' => $newStatus->getValue(),
+                'new_status' => $newStatus->getValue(),
                 'old_status'     => $oldStatus->getValue(),
             ]
         );
