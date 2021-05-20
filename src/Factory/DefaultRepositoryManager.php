@@ -77,16 +77,16 @@ final class DefaultRepositoryManager implements RepositoryManager
         }
 
         return new $aggregateRepository(
-            $this->determineAggregateType($config['aggregate_type']),
+            $this->makeAggregateType($config['aggregate_type']),
             $this->chroniclerManager->create($config['chronicler']),
-            $this->determineStreamProducer($streamName, $config),
-            $this->createAggregateCacheDriver($config['cache'] ?? []),
-            $this->createAggregateEventReleaser($streamName),
+            $this->makeStreamProducer($streamName, $config),
+            $this->makeAggregateCacheDriver($config['cache'] ?? []),
+            $this->makeAggregateEventReleaser($streamName),
             $snapshotStoreId
         );
     }
 
-    private function determineAggregateType(string|array $aggregateType): AggregateType
+    private function makeAggregateType(string|array $aggregateType): AggregateType
     {
         if (is_string($aggregateType)) {
             if (is_subclass_of($aggregateType, AggregateRoot::class)) {
@@ -99,7 +99,7 @@ final class DefaultRepositoryManager implements RepositoryManager
         return new GenericAggregateType($aggregateType['root'], $aggregateType['children']);
     }
 
-    private function determineStreamProducer(string $streamName, array $config): StreamProducer
+    private function makeStreamProducer(string $streamName, array $config): StreamProducer
     {
         $connection = $this->fromChronicler('connections.' . $config['chronicler']);
 
@@ -124,7 +124,7 @@ final class DefaultRepositoryManager implements RepositoryManager
         return new $streamProducer(new StreamName($streamName));
     }
 
-    private function createAggregateCacheDriver(array $cache): AggregateCache
+    private function makeAggregateCacheDriver(array $cache): AggregateCache
     {
         $driver = $cache['driver'] ?? 'null';
         $maxBeforeFlushingCache = $cache['max'] ?? 0;
@@ -135,7 +135,7 @@ final class DefaultRepositoryManager implements RepositoryManager
         return new GenericAggregateCache($store, $maxBeforeFlushingCache);
     }
 
-    private function createAggregateEventReleaser(string $streamName): AggregateEventReleaser
+    private function makeAggregateEventReleaser(string $streamName): AggregateEventReleaser
     {
         $messageDecorators = [];
 
