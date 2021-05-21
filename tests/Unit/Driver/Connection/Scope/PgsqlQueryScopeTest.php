@@ -14,8 +14,9 @@ final class PgsqlQueryScopeTest extends TestCaseWithProphecy
 {
     /**
      * @test
+     * @dataProvider provideDirection
      */
-    public function it_match_aggregate_id_and_type_greater_than_version(): void
+    public function it_match_aggregate_id_and_type_greater_than_version(string $direction): void
     {
         $builder = $this->prophesize(Builder::class);
 
@@ -34,13 +35,13 @@ final class PgsqlQueryScopeTest extends TestCaseWithProphecy
             ->shouldBeCalled();
 
         $builder
-            ->orderByRaw('CAST(headers->>\'__aggregate_version\' AS INT)')
+            ->orderByRaw('CAST(headers->>\'__aggregate_version\' AS INT) ' . $direction)
             ->willReturn($builder)
             ->shouldBeCalled();
 
         $scope = new PgsqlQueryScope();
 
-        $filter = $scope->matchAggregateGreaterThanVersion('id', 'type', 1);
+        $filter = $scope->matchAggregateGreaterThanVersion('id', 'type', 1, $direction);
 
         $filter->filterQuery()($builder->reveal());
     }
@@ -67,5 +68,11 @@ final class PgsqlQueryScopeTest extends TestCaseWithProphecy
     {
         yield [-1];
         yield [-5];
+    }
+
+    public function provideDirection(): Generator
+    {
+        yield ['asc'];
+        yield ['desc'];
     }
 }

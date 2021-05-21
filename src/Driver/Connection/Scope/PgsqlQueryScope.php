@@ -13,7 +13,8 @@ class PgsqlQueryScope extends ConnectionQueryScope
 {
     public function matchAggregateGreaterThanVersion(string $aggregateId,
                                                      string $aggregateType,
-                                                     int $aggregateVersion): QueryFilter
+                                                     int $aggregateVersion,
+                                                     string $direction = 'asc'): QueryFilter
     {
         // checkMe
         // allowing zero can include first version
@@ -21,12 +22,12 @@ class PgsqlQueryScope extends ConnectionQueryScope
             throw new InvalidArgumentException("Aggregate version must be greater or equals than 0, current is $aggregateVersion");
         }
 
-        $callback = function (Builder $query) use ($aggregateId, $aggregateType, $aggregateVersion): void {
+        $callback = function (Builder $query) use ($aggregateId, $aggregateType, $aggregateVersion, $direction): void {
             $query
                 ->whereJsonContains('headers->__aggregate_id', $aggregateId)
                 ->whereJsonContains('headers->__aggregate_type', $aggregateType)
                 ->whereRaw('CAST(headers->>\'__aggregate_version\' AS INT) > ' . $aggregateVersion)
-                ->orderByRaw('CAST(headers->>\'__aggregate_version\' AS INT)');
+                ->orderByRaw('CAST(headers->>\'__aggregate_version\' AS INT) ' . $direction);
         };
 
         return $this->wrap($callback);

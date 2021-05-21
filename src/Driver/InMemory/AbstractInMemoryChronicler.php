@@ -18,7 +18,6 @@ use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Chronicler\Support\Contracts\Model\EventStreamProvider;
 use Chronhub\Chronicler\Support\Contracts\Query\InMemoryQueryFilter;
 use function count;
-use function is_string;
 
 abstract class AbstractInMemoryChronicler implements InMemoryChronicler
 {
@@ -49,11 +48,11 @@ abstract class AbstractInMemoryChronicler implements InMemoryChronicler
                 return function (DomainEvent $event): ?DomainEvent {
                     $currentAggregateId = $event->header(Header::AGGREGATE_ID);
 
-                    if (is_string($currentAggregateId)) {
-                        return $currentAggregateId === $this->aggregateId->toString() ? $event : null;
+                    if ($currentAggregateId instanceof AggregateId) {
+                        $currentAggregateId = $currentAggregateId->toString();
                     }
 
-                    return $this->aggregateId->equalsTo($currentAggregateId) ? $event : null;
+                    return $currentAggregateId === $this->aggregateId->toString() ? $event : null;
                 };
             }
         };

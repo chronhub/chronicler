@@ -13,5 +13,6 @@ interface QueryScope
 
     public function matchAggregateGreaterThanVersion(string $aggregateId,
                                                      string $aggregateType,
-                                                     int $aggregateVersion): QueryFilter;
+                                                     int $aggregateVersion,
+                                                     string $direction = 'asc'): QueryFilter;
 }
