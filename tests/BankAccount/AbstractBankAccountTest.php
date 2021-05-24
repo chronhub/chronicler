@@ -187,6 +187,8 @@ abstract class AbstractBankAccountTest extends TestCaseWithOrchestra
 
     protected function setupServices(Application $app, string $chroniclerDriver): void
     {
+        $app->singleton(config('chronicler.provider.in_memory'));
+
         $this->provideInMemoryConfig($app, $chroniclerDriver);
 
         $this->provideRepositoriesConfig($app, $chroniclerDriver);

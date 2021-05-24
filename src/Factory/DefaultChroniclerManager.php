@@ -242,11 +242,11 @@ final class DefaultChroniclerManager implements ChroniclerManager
 
         $eventStream = $this->fromChronicler("provider.$eventStreamKey");
 
-        if ( ! is_string($eventStream) && !$this->app->bound($eventStream)) {
+        if ( ! is_string($eventStream) && ! $this->app->bound($eventStream)) {
             throw new RuntimeException('Unable to determine stream provider');
         }
 
-        return $this->app->make($eventStream);
+        return $this->app->get($eventStream);
     }
 
     private function determineTracker(array $config): ?StreamTracker
