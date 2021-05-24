@@ -18,6 +18,8 @@ interface EventStreamProvider
     public function filterByStreams(array $streamNames): array;
 
     /**
+     * @param string[] $categoryNames
+     *
      * @return string[]
      */
     public function filterByCategories(array $categoryNames): array;
