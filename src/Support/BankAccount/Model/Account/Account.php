@@ -14,7 +14,7 @@ final class Account implements AggregateRoot
 {
     use HasAggregateRoot;
 
-    public const MAX_FAILURES_BEFORE_SUSPEND_ACCOUNT = 5;
+    public const MAX_FAILURES_BEFORE_SUSPEND_ACCOUNT = 20;
 
     private Balance $balance;
     private int $failures = 0;

@@ -18,7 +18,7 @@ final class WithdrawMade extends AggregateChanged
         return self::occur(
             $accountId->toString(),
             [
-                'customerId'  => $customerId->toString(),
+                'customer_id'  => $customerId->toString(),
                 'old_balance' => $oldBalance->available(),
                 'withdraw'     => $withdraw,
             ]

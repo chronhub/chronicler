@@ -19,7 +19,7 @@ final class WithdrawFailed extends AggregateChanged
         return self::occur(
             $accountId->toString(),
             [
-                'customerId' => $customerId->toString(),
+                'customer_id' => $customerId->toString(),
                 'withdraw'   => $withdraw,
                 'balance'    => $balance->available(),
                 'failures'   => $failures,

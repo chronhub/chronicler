@@ -18,7 +18,7 @@ final class DepositMade extends AggregateChanged
         return self::occur(
             $accountId->toString(),
             [
-                'customerId'  => $customerId->toString(),
+                'customer_id'  => $customerId->toString(),
                 'old_balance' => $oldBalance->available(),
                 'deposit'     => $deposit,
             ]
@@ -40,8 +40,8 @@ final class DepositMade extends AggregateChanged
         return $this->content['deposit'];
     }
 
-    public function oldBalance(): int
+    public function oldBalance(): Balance
     {
-        return $this->content['old_balance'];
+        return Balance::startAt($this->content['old_balance']);
     }
 }
