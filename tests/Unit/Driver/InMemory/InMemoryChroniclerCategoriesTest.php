@@ -20,6 +20,11 @@ use Chronhub\Chronicler\Driver\InMemory\InMemoryEventStream;
 use Chronhub\Chronicler\Support\Contracts\Query\QueryFilter;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Chronicler\Support\Contracts\Query\InMemoryQueryFilter;
+use function count;
+use function range;
+use function array_map;
+use function array_reverse;
+use function iterator_to_array;
 
 final class InMemoryChroniclerCategoriesTest extends TestCase
 {

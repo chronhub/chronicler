@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Chronhub\Chronicler\Stream;
 
 use Chronhub\Chronicler\Exception\InvalidArgumentException;
+use function trim;
 
 final class StreamName
 {

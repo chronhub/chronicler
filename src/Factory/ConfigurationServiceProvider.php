@@ -6,6 +6,7 @@ namespace Chronhub\Chronicler\Factory;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
+use function array_merge;
 
 final class ConfigurationServiceProvider extends ServiceProvider
 {

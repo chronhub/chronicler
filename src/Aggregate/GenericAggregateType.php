@@ -8,6 +8,9 @@ use Chronhub\Foundation\Message\DomainEvent;
 use Chronhub\Foundation\Support\Contracts\Message\Header;
 use Chronhub\Chronicler\Exception\InvalidArgumentException;
 use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateType;
+use function in_array;
+use function class_exists;
+use function is_subclass_of;
 
 class GenericAggregateType implements AggregateType
 {

@@ -8,6 +8,7 @@ use Chronhub\Chronicler\Stream\StreamName;
 use Chronhub\Foundation\Message\DomainEvent;
 use Chronhub\Chronicler\Driver\Connection\EventConverter;
 use Chronhub\Chronicler\Support\Contracts\StreamPersistence;
+use function sha1;
 
 abstract class AbstractSingleStreamPersistence implements StreamPersistence
 {

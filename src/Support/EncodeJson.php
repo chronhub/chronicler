@@ -6,6 +6,10 @@ namespace Chronhub\Chronicler\Support;
 
 use Chronhub\Chronicler\Exception\RuntimeException;
 use Chronhub\Chronicler\Support\Contracts\Support\JsonEncoder;
+use function json_decode;
+use function json_encode;
+use function json_last_error;
+use function json_last_error_msg;
 
 final class EncodeJson implements JsonEncoder
 {

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Chronhub\Chronicler\Exception;
 
 use Illuminate\Database\QueryException;
+use function sprintf;
 
 class ConcurrencyException extends RuntimeException
 {

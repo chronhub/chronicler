@@ -10,6 +10,7 @@ use Chronhub\Foundation\Support\Contracts\Message\Header;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
 use Chronhub\Foundation\Support\Contracts\Message\MessageDecorator;
 use function count;
+use function array_map;
 
 class AggregateEventReleaser
 {

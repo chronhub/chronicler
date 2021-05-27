@@ -33,6 +33,7 @@ use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerRegistered;
 use Chronhub\Chronicler\Support\BankAccount\Infrastructure\AccountChronicleStore;
 use Chronhub\Chronicler\Support\BankAccount\Infrastructure\CustomerChronicleStore;
 use function class_exists;
+use function iterator_to_array;
 
 abstract class AbstractBankAccountTest extends TestCaseWithOrchestra
 {

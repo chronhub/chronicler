@@ -26,6 +26,7 @@ use Chronhub\Chronicler\Support\Contracts\EventableChronicler;
 use Chronhub\Chronicler\Support\Contracts\Tracking\StreamTracker;
 use Chronhub\Chronicler\Support\Contracts\Tracking\ContextualStream;
 use function get_class;
+use function iterator_to_array;
 
 /** @coversDefaultClass \Chronhub\Chronicler\ProvideEventsChronicle */
 /** @coversDefaultClass \Chronhub\Chronicler\GenericEventChronicler */

@@ -31,6 +31,9 @@ use Chronhub\Chronicler\Driver\InMemory\InMemoryTransactionalChronicler;
 use Chronhub\Chronicler\Support\Contracts\Tracking\TransactionalStreamTracker;
 use function is_array;
 use function is_string;
+use function array_walk;
+use function class_exists;
+use function method_exists;
 
 final class DefaultChroniclerManager implements ChroniclerManager
 {

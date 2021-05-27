@@ -8,6 +8,7 @@ use Chronhub\Foundation\Message\DomainEvent;
 use Chronhub\Foundation\Aggregate\HasAggregateRoot;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
+use function count;
 
 class SomeAggregateRoot implements AggregateRoot
 {

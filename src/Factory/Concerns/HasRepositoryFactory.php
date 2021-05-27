@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Chronhub\Chronicler\Factory\Concerns;
 
 use Chronhub\Foundation\Support\Contracts\Message\MessageDecorator;
+use function is_array;
+use function array_map;
+use function array_merge;
 
 trait HasRepositoryFactory
 {

@@ -7,6 +7,7 @@ namespace Chronhub\Chronicler\Support\Traits;
 use Generator;
 use Illuminate\Support\Collection;
 use Chronhub\Foundation\Reporter\ReportEvent;
+use function iterator_to_array;
 
 trait RecordStreamEvent
 {

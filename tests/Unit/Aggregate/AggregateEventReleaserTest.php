@@ -18,6 +18,8 @@ use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
 use Chronhub\Foundation\Support\Contracts\Message\MessageDecorator;
 use function reset;
+use function array_shift;
+use function iterator_to_array;
 
 /** @coversDefaultClass \Chronhub\Chronicler\Aggregate\AggregateEventReleaser */
 final class AggregateEventReleaserTest extends TestCaseWithProphecy

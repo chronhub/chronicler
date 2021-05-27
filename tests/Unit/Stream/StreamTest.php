@@ -11,6 +11,7 @@ use Illuminate\Support\LazyCollection;
 use Chronhub\Chronicler\Tests\TestCase;
 use Chronhub\Chronicler\Stream\StreamName;
 use Chronhub\Chronicler\Tests\Double\SomeCommand;
+use function iterator_to_array;
 
 /** @coversDefaultClass \Chronhub\Chronicler\Stream\Stream */
 class StreamTest extends TestCase

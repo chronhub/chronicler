@@ -16,6 +16,7 @@ use Chronhub\Chronicler\Exception\TransactionAlreadyStarted;
 use Chronhub\Chronicler\Support\Contracts\TransactionalChronicler;
 use Chronhub\Chronicler\Support\Contracts\Model\EventStreamProvider;
 use function array_merge;
+use function iterator_to_array;
 
 final class InMemoryTransactionalChronicler extends AbstractInMemoryChronicler implements TransactionalChronicler
 {

@@ -33,6 +33,7 @@ use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerNameChanged;
 use Chronhub\Chronicler\Support\BankAccount\Infrastructure\CustomerChronicleStore;
 use Chronhub\Chronicler\Support\BankAccount\Model\Customer\RegisterCustomerHandler;
 use Chronhub\Chronicler\Support\BankAccount\Model\Customer\ChangeCustomerNameHandler;
+use function iterator_to_array;
 
 final class ItDecorateHeaderWithCausationCommandTest extends TestCaseWithOrchestra
 {

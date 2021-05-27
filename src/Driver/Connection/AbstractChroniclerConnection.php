@@ -24,6 +24,7 @@ use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Chronicler\Support\Contracts\TransactionalChronicler;
 use Chronhub\Chronicler\Driver\Connection\Loader\StreamEventLoader;
 use Chronhub\Chronicler\Support\Contracts\Model\EventStreamProvider;
+use function array_map;
 
 abstract class AbstractChroniclerConnection implements ChroniclerConnection
 {

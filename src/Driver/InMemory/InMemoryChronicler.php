@@ -10,6 +10,7 @@ use Chronhub\Chronicler\Exception\StreamNotFound;
 use Chronhub\Foundation\Aggregate\AggregateChanged;
 use Chronhub\Chronicler\Exception\StreamAlreadyExists;
 use Chronhub\Foundation\Support\Contracts\Message\Header;
+use function iterator_to_array;
 
 final class InMemoryChronicler extends AbstractInMemoryChronicler
 {

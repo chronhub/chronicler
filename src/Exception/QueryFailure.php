@@ -7,6 +7,7 @@ namespace Chronhub\Chronicler\Exception;
 use Throwable;
 use PDOException;
 use Illuminate\Database\QueryException;
+use function sprintf;
 
 class QueryFailure extends RuntimeException
 {

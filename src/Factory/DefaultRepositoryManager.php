@@ -26,6 +26,8 @@ use Chronhub\Chronicler\Support\Contracts\Factory\RepositoryManager;
 use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateRepository;
 use function is_array;
 use function is_string;
+use function class_exists;
+use function is_subclass_of;
 
 final class DefaultRepositoryManager implements RepositoryManager
 {
