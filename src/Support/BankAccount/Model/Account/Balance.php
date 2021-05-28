@@ -10,7 +10,6 @@ use function abs;
 final class Balance
 {
     private int $amount;
-    private int $overdraft = 0;
 
     private function __construct(int $amount)
     {
@@ -46,13 +45,8 @@ final class Balance
         return $this->amount;
     }
 
-    public function availableWithOverdraft(): int
-    {
-        return $this->amount + $this->overdraft;
-    }
-
     public function willOverflow(int $amount): bool
     {
-        return ($this->amount + $this->overdraft) - abs($amount) < 0;
+        return $this->amount - abs($amount) < 0;
     }
 }

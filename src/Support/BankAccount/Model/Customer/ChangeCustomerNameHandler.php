@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Support\BankAccount\Model\Customer;
 
-use RuntimeException;
+use Chronhub\Chronicler\Support\BankAccount\Exception\BankAccountException;
 
 final class ChangeCustomerNameHandler
 {
@@ -15,7 +15,7 @@ final class ChangeCustomerNameHandler
     public function command(ChangeCustomerName $command): void
     {
         if ( ! $customer = $this->customerCollection->get($command->customerId())) {
-            throw new RuntimeException('Customer not found');
+            throw new BankAccountException('Customer not found');
         }
 
         $customer->changeName($command->customerName());

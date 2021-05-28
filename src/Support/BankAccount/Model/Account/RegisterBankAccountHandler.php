@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Support\BankAccount\Model\Account;
 
-use RuntimeException;
+use Chronhub\Chronicler\Support\BankAccount\Exception\BankAccountException;
 use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerCollection;
 
 final class RegisterBankAccountHandler
@@ -18,19 +18,17 @@ final class RegisterBankAccountHandler
     {
         $customerId = $command->customerId();
 
-        if ( ! $this->customerCollection->get($customerId)) {
-            throw new RuntimeException('Customer not found');
+        if ( ! $customer = $this->customerCollection->get($customerId)) {
+            throw new BankAccountException('Customer not found');
         }
 
         $accountId = $command->accountId();
 
         if ($this->accountCollection->get($accountId)) {
-            throw new RuntimeException('Account already exists for customer');
+            throw new BankAccountException('Account already exists for customer');
         }
 
-        //attach account through customer
-
-        $account = Account::register($accountId, $customerId);
+        $account = $customer->attachAccount($accountId);
 
         $this->accountCollection->store($account);
     }

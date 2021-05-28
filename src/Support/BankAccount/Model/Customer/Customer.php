@@ -8,12 +8,14 @@ use Chronhub\Foundation\Aggregate\HasAggregateRoot;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Chronicler\Support\BankAccount\Model\Account\Account;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
+use Chronhub\Chronicler\Support\BankAccount\Model\Account\AccountId;
 
 final class Customer implements AggregateRoot
 {
     use HasAggregateRoot;
 
     private CustomerName $name;
+    private bool $accountCreated = false;
 
     public static function register(CustomerId $customerId, CustomerName $customerName): self
     {
@@ -22,6 +24,14 @@ final class Customer implements AggregateRoot
         $customer->recordThat(CustomerRegistered::withCustomer($customerId, $customerName));
 
         return $customer;
+    }
+
+    public function attachAccount(AccountId $accountId): Account
+    {
+        // just for rad
+        $this->accountCreated = true;
+
+        return Account::register($accountId, $this->customerId());
     }
 
     public function deposit(Account $account, int $deposit): void
@@ -40,7 +50,9 @@ final class Customer implements AggregateRoot
             return;
         }
 
-        $this->recordThat(CustomerNameChanged::forCustomer($this->customerId(), $newName, $this->name));
+        $this->recordThat(CustomerNameChanged::forCustomer(
+            $this->customerId(), $newName, $this->name)
+        );
     }
 
     public function customerId(): CustomerId|AggregateId

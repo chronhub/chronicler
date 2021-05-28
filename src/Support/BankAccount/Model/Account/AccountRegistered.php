@@ -12,14 +12,12 @@ final class AccountRegistered extends AggregateChanged
 {
     public static function forUser(AccountId $accountId,
                                    CustomerId $customerId,
-                                   AccountStatus $status,
                                     Balance $balance): self
     {
         return self::occur(
             $accountId->toString(),
             [
                 'customer_id'    => $customerId->toString(),
-                'account_status' => $status->getValue(),
                 'balance' => $balance->available(),
             ]
         );
@@ -33,11 +31,6 @@ final class AccountRegistered extends AggregateChanged
     public function accountId(): AccountId|AggregateId
     {
         return AccountId::fromString($this->aggregateId());
-    }
-
-    public function accountStatus(): AccountStatus
-    {
-        return AccountStatus::byValue($this->content['account_status']);
     }
 
     public function balance(): Balance

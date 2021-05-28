@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Support\BankAccount\Model\Account;
 
-use RuntimeException;
+use Chronhub\Chronicler\Support\BankAccount\Exception\BankAccountException;
 use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerCollection;
 
 final class MakeWithdrawHandler
@@ -19,13 +19,13 @@ final class MakeWithdrawHandler
         $customerId = $command->customerId();
 
         if ( ! $customer = $this->customerCollection->get($customerId)) {
-            throw new RuntimeException('Customer not found');
+            throw new BankAccountException('Customer not found');
         }
 
         $accountId = $command->accountId();
 
         if ( ! $account = $this->accountCollection->get($accountId)) {
-            throw new RuntimeException('Account not found for customer');
+            throw new BankAccountException('Account not found for customer');
         }
 
         $customer->withdraw($account, $command->withdraw());
