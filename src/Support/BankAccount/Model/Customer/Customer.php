@@ -28,9 +28,6 @@ final class Customer implements AggregateRoot
 
     public function attachAccount(AccountId $accountId): Account
     {
-        // just for rad
-        $this->accountCreated = true;
-
         return Account::register($accountId, $this->customerId());
     }
 
