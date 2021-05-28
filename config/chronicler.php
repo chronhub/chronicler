@@ -1,7 +1,8 @@
 <?php
 
-return [
+declare(strict_types=1);
 
+return [
     /*
     |--------------------------------------------------------------------------
     | Json encoder
@@ -56,7 +57,6 @@ return [
     */
 
     'connections' => [
-
         'default' => 'pgsql',
 
         'pgsql' => [
@@ -66,18 +66,18 @@ return [
                 'tracker_id'  => \Chronhub\Chronicler\Tracking\TrackTransactionalStream::class,
                 'subscribers' => [
                     \Chronhub\Chronicler\Tracking\Subscribers\PublishEvents::class,
-                ]
+                ],
             ],
 
             'options' => [
                 'write_lock'          => true,
-                'use_event_decorator' => true
+                'use_event_decorator' => true,
             ],
 
             'scope'        => \Chronhub\Chronicler\Driver\Connection\Scope\PgsqlQueryScope::class,
             'strategy'     => 'default',
             'provider'     => 'eloquent',
-            'query_loader' => \Chronhub\Chronicler\Driver\Connection\Loader\LazyQueryLoader::class
+            'query_loader' => \Chronhub\Chronicler\Driver\Connection\Loader\LazyQueryLoader::class,
         ],
 
         'in_memory' => [
@@ -95,11 +95,10 @@ return [
     |
     */
     'console'     => [
-
         'load_migrations' => true,
 
         'commands' => [
             \Chronhub\Chronicler\Support\Console\CreateEventStreamCommand::class,
-        ]
-    ]
+        ],
+    ],
 ];
