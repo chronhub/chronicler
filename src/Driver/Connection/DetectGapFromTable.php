@@ -12,6 +12,8 @@ use function count;
 trait DetectGapFromTable
 {
     /**
+     * Only works for single stream strategy
+     *
      * return array compose with
      *      key missing position + 1
      *      values with at least two members, the missing position - 1 , the position + 1
