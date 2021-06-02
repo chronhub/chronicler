@@ -17,7 +17,6 @@ use Chronhub\Chronicler\Aggregate\AggregateEventReleaser;
 use Chronhub\Chronicler\Support\Contracts\StreamProducer;
 use Chronhub\Foundation\Message\Decorator\ChainDecorators;
 use Chronhub\Chronicler\Aggregate\GenericAggregateRepository;
-use Chronhub\Chronicler\Factory\Concerns\HasRepositoryFactory;
 use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateType;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
 use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;

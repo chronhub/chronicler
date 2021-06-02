@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Chronhub\Chronicler\Factory\Concerns;
+namespace Chronhub\Chronicler\Factory;
 
 use Chronhub\Foundation\Support\Contracts\Message\MessageDecorator;
 use function is_array;
