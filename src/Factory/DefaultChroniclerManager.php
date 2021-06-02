@@ -19,7 +19,6 @@ use Chronhub\Chronicler\GenericTransactionalEventChronicler;
 use Chronhub\Chronicler\Support\Contracts\StreamPersistence;
 use Chronhub\Chronicler\Support\Contracts\WriteLockStrategy;
 use Chronhub\Chronicler\Support\Contracts\EventableChronicler;
-use Chronhub\Chronicler\Driver\Connection\WriteLock\NoWriteLock;
 use Chronhub\Chronicler\Driver\Connection\Loader\LazyQueryLoader;
 use Chronhub\Chronicler\Support\Contracts\Tracking\StreamTracker;
 use Chronhub\Chronicler\Support\Contracts\TransactionalChronicler;
@@ -182,17 +181,17 @@ final class DefaultChroniclerManager implements ChroniclerManager
             $connection,
             $this->createEventStreamProvider($config),
             $this->createStreamPersistence($config),
-            $this->createWriteLock($connection, $config),
             $this->createStreamEventLoader($config),
+            $this->createWriteLock($connection, $config),
         );
     }
 
-    private function createWriteLock(Connection $connection, array $config): WriteLockStrategy
+    private function createWriteLock(Connection $connection, array $config): ?WriteLockStrategy
     {
         $writeLock = $config['options']['write_lock'] ?? false;
 
         if (false === $writeLock) {
-            return new NoWriteLock();
+            return null;
         }
 
         if (true === $writeLock) {

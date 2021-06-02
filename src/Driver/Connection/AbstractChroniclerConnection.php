@@ -20,6 +20,7 @@ use Chronhub\Chronicler\Support\Contracts\StreamPersistence;
 use Chronhub\Chronicler\Support\Contracts\WriteLockStrategy;
 use Chronhub\Chronicler\Support\Traits\DetectStreamCategory;
 use Chronhub\Chronicler\Support\Contracts\ChroniclerConnection;
+use Chronhub\Chronicler\Driver\Connection\WriteLock\NoWriteLock;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Chronicler\Support\Contracts\TransactionalChronicler;
 use Chronhub\Chronicler\Driver\Connection\Loader\StreamEventLoader;
@@ -33,9 +34,10 @@ abstract class AbstractChroniclerConnection implements ChroniclerConnection
     public function __construct(protected ConnectionInterface|Connection $connection,
                                 protected EventStreamProvider $eventStreamProvider,
                                 protected StreamPersistence $persistenceStrategy,
-                                protected WriteLockStrategy $writeLockStrategy,
-                                protected StreamEventLoader $streamEventLoader)
+                                protected StreamEventLoader $streamEventLoader,
+                                protected ?WriteLockStrategy $writeLockStrategy)
     {
+        $this->writeLockStrategy = $writeLockStrategy ?? new NoWriteLock();
     }
 
     public function retrieveAll(StreamName $streamName, AggregateId $aggregateId, string $direction = 'asc'): Generator
@@ -129,9 +131,10 @@ abstract class AbstractChroniclerConnection implements ChroniclerConnection
 
     protected function handleStreamNotFound(StreamNotFound $exception): void
     {
-        // with write lock strategy set to false aka optimistic locking
+        // with write lock strategy set to false
         // any queries will raise exception: In failed sql transaction: PDOException: SQLSTATE[25P02]:
         if ($this->persistenceStrategy->isOneStreamPerAggregate()
+            && $this->writeLockStrategy instanceof NoWriteLock
             && $this instanceof TransactionalChronicler
             && $this->connection->transactionLevel() > 0
         ) {
