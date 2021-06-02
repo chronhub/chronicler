@@ -133,8 +133,7 @@ abstract class AbstractChroniclerConnection implements ChroniclerConnection
     {
         // with write lock strategy set to false
         // any queries will raise exception: In failed sql transaction: PDOException: SQLSTATE[25P02]:
-        if ($this->persistenceStrategy->isOneStreamPerAggregate()
-            && $this->writeLockStrategy instanceof NoWriteLock
+        if ($this->writeLockStrategy instanceof NoWriteLock
             && $this instanceof TransactionalChronicler
             && $this->connection->transactionLevel() > 0
         ) {
