@@ -131,10 +131,10 @@ abstract class AbstractChroniclerConnection implements ChroniclerConnection
 
     protected function handleStreamNotFound(StreamNotFound $exception): void
     {
-        // with write lock strategy set to false
+        // fixMe
         // any queries will raise exception: In failed sql transaction: PDOException: SQLSTATE[25P02]:
-        if ($this->writeLockStrategy instanceof NoWriteLock
-            && $this->persistenceStrategy->isOneStreamPerAggregate()
+        // when transaction handler subscriber is attach to the event store
+        if ($this->persistenceStrategy->isOneStreamPerAggregate()
             && $this instanceof TransactionalChronicler
             && $this->connection->transactionLevel() > 0
         ) {
