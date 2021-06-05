@@ -54,11 +54,12 @@ return [
 
             /*
              * Laravel cache config key
+             *
+             * 0 to disable
+             * cache store is set by your laravel env
+             * todo specify the cache used
              */
-            'cache' => [
-                'driver' => 'null',
-                'max' => 10000,
-            ],
+            'cache' => 10000,
 
             /*
              * Aggregate Event decorators

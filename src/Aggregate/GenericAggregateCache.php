@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Aggregate;
 
-use Illuminate\Contracts\Cache\Store;
+use Illuminate\Support\Facades\Cache;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
 use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
@@ -12,9 +12,11 @@ use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
 final class GenericAggregateCache implements AggregateCache
 {
     private int $count = 0;
+    private ?string $cacheTag;
 
-    public function __construct(private Store $store, private int $limit = 10000)
+    public function __construct(string $aggregateType, private int $limit = 10000)
     {
+        $this->cacheTag = 'cache_tag-' . class_basename($aggregateType);
     }
 
     public function put(AggregateRoot $aggregateRoot): void
@@ -31,14 +33,14 @@ final class GenericAggregateCache implements AggregateCache
 
         $cacheKey = $this->determineCacheKey($aggregateId);
 
-        $this->store->forever($cacheKey, $aggregateRoot);
+        Cache::tags([$this->cacheTag])->forever($cacheKey, $aggregateRoot);
     }
 
     public function get(AggregateId $aggregateId): ?AggregateRoot
     {
         $cacheKey = $this->determineCacheKey($aggregateId);
 
-        return $this->store->get($cacheKey);
+        return Cache::tags([$this->cacheTag])->get($cacheKey);
     }
 
     public function forget(AggregateId $aggregateId): void
@@ -46,7 +48,7 @@ final class GenericAggregateCache implements AggregateCache
         if ($this->has($aggregateId)) {
             $cacheKey = $this->determineCacheKey($aggregateId);
 
-            if ($this->store->forget($cacheKey)) {
+            if (Cache::tags([$this->cacheTag])->forget($cacheKey)) {
                 --$this->count;
             }
         }
@@ -56,14 +58,14 @@ final class GenericAggregateCache implements AggregateCache
     {
         $this->count = 0;
 
-        return $this->store->flush();
+        return Cache::tags([$this->cacheTag])->flush();
     }
 
     public function has(AggregateId $aggregateId): bool
     {
         $cacheKey = $this->determineCacheKey($aggregateId);
 
-        return null !== $this->store->get($cacheKey);
+        return Cache::tags([$this->cacheTag])->has($cacheKey);
     }
 
     public function count(): int

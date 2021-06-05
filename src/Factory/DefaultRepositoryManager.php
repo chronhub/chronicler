@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Chronhub\Chronicler\Factory;
 
 use Illuminate\Support\Arr;
-use Illuminate\Contracts\Cache\Store;
-use Illuminate\Contracts\Cache\Factory;
 use Chronhub\Chronicler\Stream\StreamName;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
@@ -80,11 +78,13 @@ final class DefaultRepositoryManager implements RepositoryManager
             throw new RuntimeException("Invalid aggregate repository class $aggregateRepository");
         }
 
+        $aggregateType = $this->makeAggregateType($config['aggregate_type']);
+
         return new $aggregateRepository(
-            $this->makeAggregateType($config['aggregate_type']),
+            $aggregateType,
             $this->chroniclerManager->create($config['chronicler']),
             $this->makeStreamProducer($streamName, $config),
-            $this->makeAggregateCacheDriver($config['cache'] ?? []),
+            $this->makeAggregateCacheDriver($aggregateType->aggregateRootClassName(), $config['cache'] ?? 0),
             $this->makeAggregateEventReleaser($streamName),
             $snapshotStoreId
         );
@@ -114,15 +114,9 @@ final class DefaultRepositoryManager implements RepositoryManager
         return new $streamProducer(new StreamName($streamName));
     }
 
-    private function makeAggregateCacheDriver(array $cache): AggregateCache
+    private function makeAggregateCacheDriver(string $aggregateType, int $limit): AggregateCache
     {
-        $driver = $cache['driver'] ?? 'null';
-        $maxBeforeFlushingCache = $cache['max'] ?? 0;
-
-        /** @var Store $store */
-        $store = $this->app->get(Factory::class)->store($driver)->getStore();
-
-        return new GenericAggregateCache($store, $maxBeforeFlushingCache);
+        return new GenericAggregateCache($aggregateType, $limit);
     }
 
     private function makeAggregateEventReleaser(string $streamName): AggregateEventReleaser
