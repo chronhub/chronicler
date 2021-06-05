@@ -78,7 +78,7 @@ return [
 
                 /*
                  * Snapshot stream name
-                 *  determine your own snapshot stream name or default: my_stream_name_snapshot
+                 * determine your own snapshot stream name or default: my_stream_name_snapshot
                  */
                 'stream_name' => null,
 
