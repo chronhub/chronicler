@@ -42,10 +42,7 @@ final class DefaultRepositoryManagerTest extends TestCaseWithOrchestra
                         'children' => [],
                     ],
                     'chronicler' => 'default',
-                    'cache' => [
-                        'driver' => 'null',
-                        'max' => 10000,
-                    ],
+                    'cache' => 10000,
                     'event_decorators' => [],
                     'snapshot' => [
                         'use_snapshot' => false,
