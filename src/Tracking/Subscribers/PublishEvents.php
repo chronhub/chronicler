@@ -28,8 +28,7 @@ final class PublishEvents implements StreamSubscriber
 
     private function subscribeToEventableChronicler(EventableChronicler $chronicler): void
     {
-        $chronicler->subscribe(
-            $chronicler::FIRST_COMMIT_EVENT,
+        $chronicler->subscribe($chronicler::FIRST_COMMIT_EVENT,
             function (ContextualStream $context) use ($chronicler): void {
                 $streamEvents = $context->stream()->events();
 
@@ -42,8 +41,7 @@ final class PublishEvents implements StreamSubscriber
                 }
             });
 
-        $chronicler->subscribe(
-            $chronicler::PERSIST_STREAM_EVENT,
+        $chronicler->subscribe($chronicler::PERSIST_STREAM_EVENT,
             function (ContextualStream $context) use ($chronicler): void {
                 $streamEvents = $context->stream()->events();
 
@@ -59,15 +57,13 @@ final class PublishEvents implements StreamSubscriber
 
     private function subscribeToTransactionalChronicler(EventableChronicler|TransactionalChronicler $chronicler): void
     {
-        $chronicler->subscribe(
-            $chronicler::COMMIT_TRANSACTION_EVENT,
+        $chronicler->subscribe($chronicler::COMMIT_TRANSACTION_EVENT,
             function (): void {
                 $recordedStreams = $this->pullRecords();
                 $this->publishEvents($recordedStreams);
             });
 
-        $chronicler->subscribe(
-            $chronicler::ROLLBACK_TRANSACTION_EVENT,
+        $chronicler->subscribe($chronicler::ROLLBACK_TRANSACTION_EVENT,
             function (): void {
                 $this->clearRecords();
             });

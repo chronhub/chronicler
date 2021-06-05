@@ -1,15 +1,15 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Aggregate;
 
-use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
+use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
 
 final class NullAggregateCache implements AggregateCache
 {
-
     public function get(AggregateId $aggregateId): ?AggregateRoot
     {
         return null;
