@@ -54,6 +54,13 @@ return [
     | Event store connection
     |--------------------------------------------------------------------------
     |
+    | Gap detection
+    |
+    | write lock strategy is mandatory for a single strategy to prevent missing events
+    |   but event if, with a lock, false positive appears due to rollback transaction
+    |   and auto increment visibility
+    |   note: that the pgsql use advisory lock and required to be under transaction
+    |
     */
 
     'connections' => [
