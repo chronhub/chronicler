@@ -80,6 +80,24 @@ return [
             'query_loader' => \Chronhub\Chronicler\Driver\Connection\Loader\LazyQueryLoader::class,
         ],
 
+        'projecting' => [
+            'driver' => 'pgsql',
+
+            'tracking' => [
+                'tracker_id' => \Chronhub\Chronicler\Tracking\TrackStream::class,
+            ],
+
+            'options' => [
+                'write_lock'          => false,
+                'use_event_decorator' => false,
+            ],
+
+            'scope'        => \Chronhub\Chronicler\Driver\Connection\Scope\PgsqlQueryScope::class,
+            'strategy'     => 'default',
+            'provider'     => 'eloquent',
+            'query_loader' => \Chronhub\Chronicler\Driver\Connection\Loader\LazyQueryLoader::class,
+        ],
+
         'in_memory' => [
             'driver'   => 'in_memory',
             'strategy' => 'single',
