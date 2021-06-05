@@ -55,9 +55,8 @@ return [
             /*
              * Laravel cache config key
              *
+             * cache store is set by your laravel cache env
              * 0 to disable
-             * cache store is set by your laravel env
-             * todo specify the cache used
              */
             'cache' => 10000,
 
