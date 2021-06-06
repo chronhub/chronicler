@@ -17,7 +17,7 @@ trait DetectGapFromTable
      * Only for single stream strategy.
      *
      * return array compose with
-     *      key missing position + 1
+     *      key missing position
      *      values with at least two members, the missing position - 1 , the position + 1
      *      and the missing position + 2 (could be absent if position + 1 is last insert).
      */
