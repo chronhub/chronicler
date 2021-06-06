@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Driver\Connection;
 
+use stdClass;
 use InvalidArgumentException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use function count;
+use Illuminate\Database\Query\Builder;
+use function array_values;
 
 trait DetectGapFromTable
 {
@@ -19,9 +21,9 @@ trait DetectGapFromTable
      *      values with at least two members, the missing position - 1 , the position + 1
      *      and the missing position + 2 (could be absent if position + 1 is last insert).
      */
-    public function detectGapsFromTable(string $table, int $from = 0, int $to = 0): array
+    public function detectGapsFromTable(string $table, int $from = 0, int $to = 0): Collection
     {
-        $query = DB::table($table);
+        $query = DB::table($table, 't1')->selectRaw('*, no + 1');
 
         if ($from > 0) {
             $query->where('no', '>=', $from);
@@ -35,35 +37,28 @@ trait DetectGapFromTable
             $query = $query->where('no', '<=', $to);
         }
 
-        $query = $query->orderBy('no');
+        $gaps = $query
+            ->whereNotExists(function (Builder $q) use ($table): void {
+                $q
+                    ->selectRaw('NULL')
+                    ->from($table, 't2')
+                    ->whereRaw('t2.no = t1.no + 1');
+            })
+            ->orderBy('no')
+            ->get()
+            ->map(fn (stdClass $res): array => [$res->no + 1 => [$res->no, $res->no + 2, $res->no + 3]])
+            ->slice(0, -1);
 
-        $gaps = new Collection();
-        $next = 0;
+        return $gaps->mapWithKeys(function (array $gaps) use ($table): array {
+            foreach ($gaps as $missingPosition => $positions) {
+                $result = DB::table($table)
+                    ->whereIn('no', array_values($gaps)[0])
+                    ->get()
+                    ->groupBy(fn (stdClass $res) => $res->no)
+                    ->transform(fn ($r) => $r[0]);
 
-        foreach ($query->cursor() as $event) {
-            $current = $event->no;
-
-            if (0 !== $next && $current !== $next) {
-                $gaps->push($event->no);
+                return [$missingPosition => $result->toArray()];
             }
-
-            $next = $current + 1;
-        }
-
-        $gaps = $gaps
-            ->map(fn (int $position): array => [$position - 2, $position, $position + 1])
-            ->toArray();
-
-        if (0 === count($gaps)) {
-            return [];
-        }
-
-        $rows = [];
-
-        foreach ($gaps as $gap) {
-            $rows[$gap[1]] = DB::table($table)->whereIn('no', $gap)->get()->toArray();
-        }
-
-        return $rows;
+        });
     }
 }
