@@ -13,6 +13,8 @@ interface AggregateType
 
     public function determineFromAggregateRoot(AggregateRoot $aggregateRoot): string;
 
+    public function determineFromAggregateRootClass(string $aggregateRootClass): string;
+
     public function assertAggregateRootIsSupported(string $aggregateRoot): void;
 
     public function aggregateRootClassName(): string;

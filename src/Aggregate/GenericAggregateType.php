@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Aggregate;
 
-use Chronhub\Foundation\Message\DomainEvent;
-use Chronhub\Foundation\Support\Contracts\Message\Header;
 use Chronhub\Chronicler\Exception\InvalidArgumentException;
 use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateType;
+use Chronhub\Foundation\Message\DomainEvent;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
-use function in_array;
+use Chronhub\Foundation\Support\Contracts\Message\Header;
 use function class_exists;
+use function in_array;
 use function is_subclass_of;
 
 class GenericAggregateType implements AggregateType
@@ -18,12 +18,12 @@ class GenericAggregateType implements AggregateType
     public function __construct(protected string $aggregateRootClassName,
                                 protected array $map = [])
     {
-        if ( ! class_exists($aggregateRootClassName)) {
+        if (!class_exists($aggregateRootClassName)) {
             throw new InvalidArgumentException('Aggregate root must be a fqcn');
         }
 
         foreach ($map as $className) {
-            if ( ! is_subclass_of($className, $this->aggregateRootClassName)) {
+            if (!is_subclass_of($className, $this->aggregateRootClassName)) {
                 throw new InvalidArgumentException("Class $className must inherit from $aggregateRootClassName");
             }
         }
@@ -50,9 +50,16 @@ class GenericAggregateType implements AggregateType
         return $aggregateRoot::class;
     }
 
+    public function determineFromAggregateRootClass(string $aggregateRootClassName): string
+    {
+        $this->assertAggregateRootIsSupported($aggregateRootClassName);
+
+        return $aggregateRootClassName;
+    }
+
     public function assertAggregateRootIsSupported(string $aggregateRoot): void
     {
-        if ( ! $this->supportAggregateRoot($aggregateRoot)) {
+        if (!$this->supportAggregateRoot($aggregateRoot)) {
             throw new InvalidArgumentException("Aggregate root $aggregateRoot class is not supported");
         }
     }
