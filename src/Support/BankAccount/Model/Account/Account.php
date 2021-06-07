@@ -6,14 +6,14 @@ namespace Chronhub\Chronicler\Support\BankAccount\Model\Account;
 
 use Chronhub\Foundation\Aggregate\HasAggregateRoot;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
-use Chronhub\Snapshot\Aggregate\HasReconstituteSnapshottingAggregate;
+use Chronhub\Snapshot\Aggregate\HasReconstituteSnapshotAggregate;
 use Chronhub\Chronicler\Support\BankAccount\Model\Customer\CustomerId;
 use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateRootWithSnapshotting;
 
 final class Account implements AggregateRootWithSnapshotting
 {
     use HasAggregateRoot;
-    use HasReconstituteSnapshottingAggregate;
+    use HasReconstituteSnapshotAggregate;
 
     private Balance $balance;
     private int $failures = 0;
