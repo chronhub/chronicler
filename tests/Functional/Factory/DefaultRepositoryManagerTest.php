@@ -7,10 +7,10 @@ namespace Chronhub\Chronicler\Tests\Functional\Factory;
 use Chronhub\Chronicler\Exception\RuntimeException;
 use Chronhub\Chronicler\Tests\TestCaseWithOrchestra;
 use Chronhub\Chronicler\Factory\ChroniclerServiceProvider;
+use Chronhub\Snapshot\Aggregate\AggregateSnapshotRepository;
 use Chronhub\Chronicler\Aggregate\GenericAggregateRepository;
 use Chronhub\Chronicler\Support\BankAccount\Model\Customer\Customer;
 use Chronhub\Chronicler\Support\Contracts\Factory\RepositoryManager;
-use Chronhub\Snapshot\Aggregate\AggregateSnapshotRepository;
 
 /** @coversDefaultClass \Chronhub\Foundation\Reporter\Services\DefaultReporterManager */
 final class DefaultRepositoryManagerTest extends TestCaseWithOrchestra
