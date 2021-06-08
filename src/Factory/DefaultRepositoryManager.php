@@ -4,28 +4,28 @@ declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Factory;
 
-use Illuminate\Support\Arr;
-use Chronhub\Chronicler\Stream\StreamName;
-use Illuminate\Contracts\Config\Repository;
-use Illuminate\Contracts\Foundation\Application;
-use Chronhub\Chronicler\Exception\RuntimeException;
-use Chronhub\Chronicler\Aggregate\NullAggregateCache;
-use Chronhub\Chronicler\Aggregate\GenericAggregateType;
-use Chronhub\Chronicler\Aggregate\GenericAggregateCache;
 use Chronhub\Chronicler\Aggregate\AggregateEventReleaser;
-use Chronhub\Chronicler\Support\Contracts\StreamProducer;
-use Chronhub\Foundation\Message\Decorator\ChainDecorators;
-use Chronhub\Snapshot\Aggregate\AggregateSnapshotRepository;
+use Chronhub\Chronicler\Aggregate\GenericAggregateCache;
 use Chronhub\Chronicler\Aggregate\GenericAggregateRepository;
-use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateType;
-use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
+use Chronhub\Chronicler\Aggregate\GenericAggregateType;
+use Chronhub\Chronicler\Aggregate\NullAggregateCache;
+use Chronhub\Chronicler\Exception\RuntimeException;
+use Chronhub\Chronicler\Stream\StreamName;
 use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
+use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateRepository;
+use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateType;
 use Chronhub\Chronicler\Support\Contracts\Factory\ChroniclerManager;
 use Chronhub\Chronicler\Support\Contracts\Factory\RepositoryManager;
-use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateRepository;
+use Chronhub\Chronicler\Support\Contracts\StreamProducer;
+use Chronhub\Foundation\Message\Decorator\ChainDecorators;
+use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
+use Chronhub\Snapshot\Aggregate\AggregateSnapshotRepository;
+use Illuminate\Contracts\Config\Repository;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Arr;
+use function class_exists;
 use function is_array;
 use function is_string;
-use function class_exists;
 use function is_subclass_of;
 
 final class DefaultRepositoryManager implements RepositoryManager
@@ -49,7 +49,7 @@ final class DefaultRepositoryManager implements RepositoryManager
 
         $config = $this->fromChronicler("repositories.$streamName");
 
-        if ( ! is_array($config) || empty($config)) {
+        if (!is_array($config) || empty($config)) {
             throw new RuntimeException("Invalid repository config for stream name $streamName");
         }
 
@@ -69,17 +69,19 @@ final class DefaultRepositoryManager implements RepositoryManager
 
         $aggregateRepository = null;
         $snapshotStoreId = null;
+        $persistEveryEvents = null;
 
         if ($this->isSnapshotProvided($config)) {
             $aggregateRepository = $config['snapshot']['repository'] ?? AggregateSnapshotRepository::class;
             $snapshotStoreId = $this->app->get($config['snapshot']['store']);
+            $persistEveryEvents = $config['snapshot']['persist_every_x_events'] === 1;
         }
 
         if (null === $aggregateRepository) {
             $aggregateRepository = GenericAggregateRepository::class;
         }
 
-        if ( ! class_exists($aggregateRepository)) {
+        if (!class_exists($aggregateRepository)) {
             throw new RuntimeException("Invalid aggregate repository class $aggregateRepository");
         }
 
@@ -91,7 +93,8 @@ final class DefaultRepositoryManager implements RepositoryManager
             $this->makeStreamProducer($streamName, $config),
             $this->makeAggregateCacheDriver($aggregateType->aggregateRootClassName(), $config['cache'] ?? 0),
             $this->makeAggregateEventReleaser($streamName),
-            $snapshotStoreId
+            $snapshotStoreId,
+            $persistEveryEvents
         );
     }
 
@@ -112,7 +115,7 @@ final class DefaultRepositoryManager implements RepositoryManager
     {
         $streamProducer = $this->determineStreamProducerDriver($config);
 
-        if ( ! is_string($streamProducer)) {
+        if (!is_string($streamProducer)) {
             throw new RuntimeException('Unable to determine stream producer strategy');
         }
 
