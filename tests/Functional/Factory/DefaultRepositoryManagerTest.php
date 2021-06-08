@@ -10,6 +10,7 @@ use Chronhub\Chronicler\Factory\ChroniclerServiceProvider;
 use Chronhub\Chronicler\Aggregate\GenericAggregateRepository;
 use Chronhub\Chronicler\Support\BankAccount\Model\Customer\Customer;
 use Chronhub\Chronicler\Support\Contracts\Factory\RepositoryManager;
+use Chronhub\Snapshot\Aggregate\AggregateSnapshotRepository;
 
 /** @coversDefaultClass \Chronhub\Foundation\Reporter\Services\DefaultReporterManager */
 final class DefaultRepositoryManagerTest extends TestCaseWithOrchestra
@@ -48,11 +49,11 @@ final class DefaultRepositoryManagerTest extends TestCaseWithOrchestra
                         'use_snapshot' => false,
                         'stream_name' => null,
                         'store' => 'snapshot.store.service.id',
-                        'repository' => 'AggregateRepositoryWithSnapshot',
+                        'repository' => AggregateSnapshotRepository::class,
                         'persist_every_x_events' => 1000,
                         'projector' => [
                             'name' => 'default',
-                            'options' => 'lazy',
+                            'options' => 'default',
                         ],
                     ],
                 ],
