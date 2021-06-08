@@ -92,10 +92,15 @@ return [
                 /*
                  * Snapshot Aggregate Repository
                  */
-                'repository' => 'AggregateRepositoryWithSnapshot',
+                'repository' => \Chronhub\Snapshot\Aggregate\AggregateSnapshotRepository::class,
 
                 /*
                  * Persist snapshot every x events
+                 *
+                 * as the value exists on repo and snapshot read model,
+                 * do not change it without stopping your concern projectors
+                 * if you switch to 1 to x and vice versa, as the return aggregate
+                 * from snapshot repository differ on stream not found exception
                  */
                 'persist_every_x_events' => 1000,
 
