@@ -96,7 +96,6 @@ return [
 
                 /*
                  * Persist snapshot every x events
-                 * should be equal to persist block size in projector option
                  */
                 'persist_every_x_events' => 1000,
 
@@ -106,7 +105,7 @@ return [
                  */
                 'projector' => [
                     'name' => 'default',
-                    'options' => 'lazy',
+                    'options' => 'default',
                 ],
             ],
         ],
