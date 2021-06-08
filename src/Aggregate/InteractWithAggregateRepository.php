@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Aggregate;
 
+use Chronhub\Chronicler\Support\Contracts\Query\QueryFilter;
 use Chronhub\Chronicler\Support\Contracts\ReadOnlyChronicler;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
@@ -26,13 +27,18 @@ trait InteractWithAggregateRepository
         return $aggregateRoot;
     }
 
+    public function retrievePartially(AggregateId $aggregateId, QueryFilter $queryFilter): ?AggregateRoot
+    {
+        return $this->reconstituteAggregateRoot($aggregateId, $queryFilter);
+    }
+
     public function persist(AggregateRoot $aggregateRoot): void
     {
         $this->aggregateType->assertAggregateRootIsSupported($aggregateRoot::class);
 
         $events = $this->eventsReleaser->releaseEvents($aggregateRoot);
 
-        if ( ! $firstEvent = reset($events)) {
+        if (!$firstEvent = reset($events)) {
             return;
         }
 

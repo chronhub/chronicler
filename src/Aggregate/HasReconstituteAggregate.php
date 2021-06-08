@@ -20,10 +20,10 @@ trait HasReconstituteAggregate
     protected StreamProducer $streamProducer;
     protected Chronicler $chronicler;
 
-    protected function reconstituteAggregateRoot(AggregateId $aggregateId): ?AggregateRoot
+    protected function reconstituteAggregateRoot(AggregateId $aggregateId, ?QueryFilter $queryFilter = null): ?AggregateRoot
     {
         try {
-            $history = $this->fromHistory($aggregateId, null);
+            $history = $this->fromHistory($aggregateId, $queryFilter);
 
             if ( ! $history->valid()) {
                 return null;
