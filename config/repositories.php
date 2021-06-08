@@ -40,7 +40,7 @@ return [
         'my_stream_name' => [
             /*
              * Specify your aggregate root class as string or
-             * an array with your aggregate root class with his children
+             * an array with your aggregate root class with his subclasses
              */
             'aggregate_type' => [
                 'root' => 'AG class name',
@@ -97,10 +97,7 @@ return [
                 /*
                  * Persist snapshot every x events
                  *
-                 * as the value exists on repo and snapshot read model,
-                 * do not change it without stopping your concern projectors
-                 * if you switch to 1 to x and vice versa, as the return aggregate
-                 * from snapshot repository differ on stream not found exception
+                 * must be greater than 1
                  */
                 'persist_every_x_events' => 1000,
 
