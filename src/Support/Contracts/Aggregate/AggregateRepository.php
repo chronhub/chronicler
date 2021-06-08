@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Support\Contracts\Aggregate;
 
-use Chronhub\Chronicler\Support\Contracts\Query\QueryFilter;
 use Chronhub\Chronicler\Support\Contracts\ReadOnlyChronicler;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
@@ -12,11 +11,6 @@ use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
 interface AggregateRepository
 {
     public function retrieve(AggregateId $aggregateId): ?AggregateRoot;
-
-    /**
-     * use with care as it would return an invalid aggregate state
-     */
-    public function retrievePartially(AggregateId $aggregateId, QueryFilter $queryFilter): ?AggregateRoot;
 
     public function persist(AggregateRoot $aggregateRoot): void;
 
