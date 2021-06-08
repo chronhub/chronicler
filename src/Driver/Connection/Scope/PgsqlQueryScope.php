@@ -16,8 +16,6 @@ class PgsqlQueryScope extends ConnectionQueryScope
                                                      int $aggregateVersion,
                                                      string $direction = 'asc'): QueryFilter
     {
-        // checkMe
-        // allowing zero can include first version
         if ($aggregateVersion < 0) {
             throw new InvalidArgumentException("Aggregate version must be greater or equals than 0, current is $aggregateVersion");
         }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Aggregate;
 
+use Chronhub\Chronicler\Support\Contracts\StreamProducer;
 use Chronhub\Chronicler\Support\Contracts\ReadOnlyChronicler;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
@@ -48,6 +49,11 @@ trait InteractWithAggregateRepository
     public function chronicler(): ReadOnlyChronicler
     {
         return $this->chronicler;
+    }
+
+    public function streamProducer(): StreamProducer
+    {
+        return $this->streamProducer;
     }
 
     public function flushCache(): void
