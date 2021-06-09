@@ -38,11 +38,22 @@ return [
     'strategy' => [
         'default' => 'single',
 
+        /*
+         * One stream per aggregate type
+         * each aggregate per aggregate id will have his own event store/table
+         * eg: account-1234-5678-9101 ...
+         */
         'aggregate' => [
             'persistence' => \Chronhub\Chronicler\Driver\Connection\Persistence\PgsqlAggregateStreamPersistence::class,
             'producer'    => \Chronhub\Chronicler\Producer\OneStreamPerAggregate::class,
         ],
 
+        /*
+         * Single stream per aggregate
+         * each aggregate root would have his his own event store/table
+         *
+         * require pessimistic lock
+         */
         'single' => [
             'persistence' => \Chronhub\Chronicler\Driver\Connection\Persistence\PgsqlSingleStreamPersistence::class,
             'producer'    => \Chronhub\Chronicler\Producer\SingleStreamPerAggregate::class,
@@ -57,9 +68,9 @@ return [
     | Gap detection
     |
     | write lock strategy is mandatory for a single strategy to prevent missing events
-    |   but event if, with a lock, false positive appears due to rollback transaction
-    |   and auto increment visibility
-    |   note: that the pgsql use advisory lock and required to be under transaction
+    | but event if, with a lock, false positive appears due to rollback transaction
+    | and auto increment visibility
+    | note: the pgsql use advisory lock and required to be under transaction
     |
     */
 
