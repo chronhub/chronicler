@@ -11,15 +11,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Query\Builder;
 use function array_values;
 
-trait DetectGapFromTable
+trait DetectSingleStreamPersistenceGap
 {
     /**
-     * Only for single stream strategy.
-     *
-     * return array compose with
-     *      key missing position
-     *      values with at least two members, the missing position - 1 , the position + 1
-     *      and the missing position + 2 (could be absent if position + 1 is last insert).
+     * Positions around missing position can not belong to the same identity
      */
     public function detectGapsFromTable(string $table, int $from = 0, int $to = 0): Collection
     {
@@ -37,7 +32,7 @@ trait DetectGapFromTable
             $query = $query->where('no', '<=', $to);
         }
 
-        $gaps = $query
+        return $query
             ->whereNotExists(function (Builder $q) use ($table): void {
                 $q
                     ->selectRaw('NULL')
@@ -47,8 +42,20 @@ trait DetectGapFromTable
             ->orderBy('no')
             ->get()
             ->map(fn (stdClass $res): array => [$res->no + 1 => [$res->no, $res->no + 2, $res->no + 3]])
-            ->slice(0, -1);
+            ->slice(0, -1); // remove last id which never exists
+    }
 
+    /**
+     * Find events according to the gap position.
+     *
+     * return collection with missing position key
+     * and values with at least one member:
+     *      the missing position - 1, could be absent if is a gap too
+     *      the position + 1
+     *      the missing position + 2, could be absent if position + 1 is last insert
+     */
+    public function lookUp(string $table, Collection $gaps): Collection
+    {
         return $gaps->mapWithKeys(function (array $gaps) use ($table): array {
             foreach ($gaps as $missingPosition => $positions) {
                 $result = DB::table($table)
