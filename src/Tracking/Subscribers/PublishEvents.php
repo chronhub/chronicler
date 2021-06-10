@@ -34,10 +34,10 @@ final class PublishEvents implements StreamSubscriber
 
                 if ( ! $this->inTransaction($chronicler)) {
                     if ( ! $context->hasStreamAlreadyExits()) {
-                        $this->publishEvents($streamEvents);
+                        $this->publish($streamEvents);
                     }
                 } else {
-                    $this->recordStreams($streamEvents);
+                    $this->record($streamEvents);
                 }
             });
 
@@ -47,10 +47,10 @@ final class PublishEvents implements StreamSubscriber
 
                 if ( ! $this->inTransaction($chronicler)) {
                     if ( ! $context->hasStreamNotFound() && ! $context->hasRaceCondition()) {
-                        $this->publishEvents($streamEvents);
+                        $this->publish($streamEvents);
                     }
                 } else {
-                    $this->recordStreams($streamEvents);
+                    $this->record($streamEvents);
                 }
             });
     }
@@ -59,13 +59,13 @@ final class PublishEvents implements StreamSubscriber
     {
         $chronicler->subscribe($chronicler::COMMIT_TRANSACTION_EVENT,
             function (): void {
-                $recordedStreams = $this->pullRecords();
-                $this->publishEvents($recordedStreams);
+                $recordedStreams = $this->pull();
+                $this->publish($recordedStreams);
             });
 
         $chronicler->subscribe($chronicler::ROLLBACK_TRANSACTION_EVENT,
             function (): void {
-                $this->clearRecords();
+                $this->clear();
             });
     }
 

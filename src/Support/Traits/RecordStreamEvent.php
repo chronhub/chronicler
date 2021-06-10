@@ -11,23 +11,23 @@ use function iterator_to_array;
 
 trait RecordStreamEvent
 {
-    protected Collection $recordedStreams;
+    protected Collection $recorder;
 
     public function __construct(protected ReportEvent $reporter)
     {
-        $this->recordedStreams = new Collection();
+        $this->recorder = new Collection();
     }
 
-    protected function recordStreams(iterable $events): void
+    protected function record(iterable $events): void
     {
         if ($events instanceof Generator) {
             $events = iterator_to_array($events);
         }
 
-        $this->recordedStreams->push($events);
+        $this->recorder->push($events);
     }
 
-    protected function publishEvents(iterable $events): void
+    protected function publish(iterable $events): void
     {
         if ($events instanceof Generator) {
             $events = iterator_to_array($events);
@@ -42,17 +42,17 @@ trait RecordStreamEvent
         }
     }
 
-    protected function pullRecords(): array
+    protected function pull(): array
     {
-        $recordedStreams = $this->recordedStreams->flatten();
+        $recordedStreams = $this->recorder->flatten();
 
-        $this->clearRecords();
+        $this->clear();
 
         return $recordedStreams->toArray();
     }
 
-    protected function clearRecords(): void
+    protected function clear(): void
     {
-        $this->recordedStreams = new Collection();
+        $this->recorder = new Collection();
     }
 }
