@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Aggregate;
 
-use Illuminate\Support\Facades\Cache;
+use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
-use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
+use Illuminate\Support\Facades\Cache;
 
 final class GenericAggregateCache implements AggregateCache
 {
     private int $count = 0;
-    private ?string $cacheTag;
 
-    public function __construct(string $aggregateType, private int $limit = 10000)
+    public function __construct(string $aggregateType,
+                                private string $cacheTag,
+                                private int $limit = 10000)
     {
-        $this->cacheTag = 'cache_tag-' . class_basename($aggregateType);
     }
 
     public function put(AggregateRoot $aggregateRoot): void
@@ -27,7 +27,7 @@ final class GenericAggregateCache implements AggregateCache
 
         $aggregateId = $aggregateRoot->aggregateId();
 
-        if ( ! $this->has($aggregateId)) {
+        if (!$this->has($aggregateId)) {
             ++$this->count;
         }
 

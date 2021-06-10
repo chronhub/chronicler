@@ -55,10 +55,14 @@ return [
             /*
              * Laravel cache config key
              *
-             * cache store is set by your laravel cache env
-             * 0 to disable
+             * determine aggregate cache key under cache tag
+             *      {tag}-{aggregate id base class}:{aggregate id}
+             * size 0 to disable
              */
-            'cache' => 10000,
+            'cache' => [
+                'size' => 10000,
+                'tag' => 'identity-Account'
+            ],
 
             /*
              * Aggregate Event decorators
