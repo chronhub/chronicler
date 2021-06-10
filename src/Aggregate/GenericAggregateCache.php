@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Aggregate;
 
-use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
+use Illuminate\Support\Facades\Cache;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
-use Illuminate\Support\Facades\Cache;
+use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
 
 final class GenericAggregateCache implements AggregateCache
 {
@@ -27,7 +27,7 @@ final class GenericAggregateCache implements AggregateCache
 
         $aggregateId = $aggregateRoot->aggregateId();
 
-        if (!$this->has($aggregateId)) {
+        if ( ! $this->has($aggregateId)) {
             ++$this->count;
         }
 

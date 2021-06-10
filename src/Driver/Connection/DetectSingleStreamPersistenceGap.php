@@ -14,7 +14,7 @@ use function array_values;
 trait DetectSingleStreamPersistenceGap
 {
     /**
-     * Positions around missing position can not belong to the same identity
+     * Positions around missing position can not belong to the same identity.
      */
     public function detectGapsFromTable(string $table, int $from = 0, int $to = 0): Collection
     {

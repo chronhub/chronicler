@@ -4,28 +4,29 @@ declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Factory;
 
-use Chronhub\Chronicler\Aggregate\AggregateEventReleaser;
-use Chronhub\Chronicler\Aggregate\GenericAggregateCache;
-use Chronhub\Chronicler\Aggregate\GenericAggregateRepository;
-use Chronhub\Chronicler\Aggregate\GenericAggregateType;
-use Chronhub\Chronicler\Aggregate\NullAggregateCache;
-use Chronhub\Chronicler\Exception\RuntimeException;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Chronhub\Chronicler\Stream\StreamName;
-use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
-use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateRepository;
-use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateType;
-use Chronhub\Chronicler\Support\Contracts\Factory\ChroniclerManager;
-use Chronhub\Chronicler\Support\Contracts\Factory\RepositoryManager;
-use Chronhub\Chronicler\Support\Contracts\StreamProducer;
-use Chronhub\Foundation\Message\Decorator\ChainDecorators;
-use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
-use Chronhub\Snapshot\Aggregate\AggregateSnapshotRepository;
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Support\Arr;
-use function class_exists;
+use Chronhub\Chronicler\Exception\RuntimeException;
+use Chronhub\Chronicler\Aggregate\NullAggregateCache;
+use Chronhub\Chronicler\Aggregate\GenericAggregateType;
+use Chronhub\Chronicler\Aggregate\GenericAggregateCache;
+use Chronhub\Chronicler\Aggregate\AggregateEventReleaser;
+use Chronhub\Chronicler\Support\Contracts\StreamProducer;
+use Chronhub\Foundation\Message\Decorator\ChainDecorators;
+use Chronhub\Snapshot\Aggregate\AggregateSnapshotRepository;
+use Chronhub\Chronicler\Aggregate\GenericAggregateRepository;
+use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateType;
+use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
+use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
+use Chronhub\Chronicler\Support\Contracts\Factory\ChroniclerManager;
+use Chronhub\Chronicler\Support\Contracts\Factory\RepositoryManager;
+use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateRepository;
 use function is_array;
 use function is_string;
+use function class_exists;
 use function is_subclass_of;
 
 final class DefaultRepositoryManager implements RepositoryManager
@@ -49,7 +50,7 @@ final class DefaultRepositoryManager implements RepositoryManager
 
         $config = $this->fromChronicler("repositories.$streamName");
 
-        if (!is_array($config) || empty($config)) {
+        if ( ! is_array($config) || empty($config)) {
             throw new RuntimeException("Invalid repository config for stream name $streamName");
         }
 
@@ -81,7 +82,7 @@ final class DefaultRepositoryManager implements RepositoryManager
             $aggregateRepository = GenericAggregateRepository::class;
         }
 
-        if (!class_exists($aggregateRepository)) {
+        if ( ! class_exists($aggregateRepository)) {
             throw new RuntimeException("Invalid aggregate repository class $aggregateRepository");
         }
 
@@ -115,7 +116,7 @@ final class DefaultRepositoryManager implements RepositoryManager
     {
         $streamProducer = $this->determineStreamProducerDriver($config);
 
-        if (!is_string($streamProducer)) {
+        if ( ! is_string($streamProducer)) {
             throw new RuntimeException('Unable to determine stream producer strategy');
         }
 
@@ -128,7 +129,9 @@ final class DefaultRepositoryManager implements RepositoryManager
             return new NullAggregateCache();
         }
 
-        return new GenericAggregateCache($aggregateType, $cache['tag'], $cache['size']);
+        $tag = $cache['tag'] ?? 'identity-' . Str::snake(class_basename($aggregateType));
+
+        return new GenericAggregateCache($aggregateType, $tag, $cache['size']);
     }
 
     private function makeAggregateEventReleaser(string $streamName): AggregateEventReleaser

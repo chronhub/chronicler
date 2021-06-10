@@ -56,12 +56,14 @@ return [
              * Laravel cache config key
              *
              * determine aggregate cache key under cache tag
-             *      {tag}-{aggregate id base class}:{aggregate id}
+             * if not provided a tag will be generated as
+             * {identity-aggregate id snake base class}
+             *
              * size 0 to disable
              */
             'cache' => [
                 'size' => 10000,
-                'tag' => 'identity-Account'
+                'tag' => 'identity-my_account',
             ],
 
             /*
