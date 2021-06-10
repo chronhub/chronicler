@@ -21,11 +21,6 @@ final class LazyQueryLoader extends StreamEventLoader
 
     protected function generateFrom(Builder $builder, StreamName $StreamName): LazyCollection|Collection
     {
-        // When using the built-in lazy function on the query builder,
-        // limiting the number of results does not work
-        // Note that it's still chunk the query if the limit is greater
-        // than the chunk size property
-
         $limit = is_int($builder->limit) ? $builder->limit : null;
 
         $query = $builder->lazy(min($limit ?? PHP_INT_MAX, $this->chunkSize));
