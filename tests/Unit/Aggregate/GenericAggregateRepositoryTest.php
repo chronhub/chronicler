@@ -259,13 +259,11 @@ final class GenericAggregateRepositoryTest extends TestCaseWithProphecy
     /**
      * @test
      */
-    public function it_flush_aggregate_cache(): void
+    public function it_return_aggregate_cache(): void
     {
-        $this->aggregateCache->flush()->willReturn(true)->shouldBeCalled();
-
         $repository = $this->repositoryInstance();
 
-        $repository->flushCache();
+        $this->assertEquals($this->aggregateCache->reveal(), $repository->aggregateCache());
     }
 
     private function provideEvents(DomainEvent $firstEvent): Generator

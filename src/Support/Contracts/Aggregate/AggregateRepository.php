@@ -19,8 +19,5 @@ interface AggregateRepository
 
     public function streamProducer(): StreamProducer;
 
-    /**
-     * Flush aggregate cache.
-     */
-    public function flushCache(): void;
+    public function aggregateCache(): AggregateCache;
 }

@@ -8,6 +8,7 @@ use Chronhub\Chronicler\Support\Contracts\StreamProducer;
 use Chronhub\Chronicler\Support\Contracts\ReadOnlyChronicler;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateId;
 use Chronhub\Foundation\Support\Contracts\Aggregate\AggregateRoot;
+use Chronhub\Chronicler\Support\Contracts\Aggregate\AggregateCache;
 use function reset;
 
 trait InteractWithAggregateRepository
@@ -56,8 +57,8 @@ trait InteractWithAggregateRepository
         return $this->streamProducer;
     }
 
-    public function flushCache(): void
+    public function aggregateCache(): AggregateCache
     {
-        $this->aggregateCache->flush();
+        return $this->aggregateCache;
     }
 }
