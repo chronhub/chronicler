@@ -102,8 +102,6 @@ return [
 
                 /*
                  * Persist snapshot every x events
-                 *
-                 * must be greater than 1
                  */
                 'persist_every_x_events' => 1000,
 
