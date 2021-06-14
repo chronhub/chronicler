@@ -70,12 +70,10 @@ final class DefaultRepositoryManager implements RepositoryManager
 
         $aggregateRepository = null;
         $snapshotStoreId = null;
-        $persistEveryEvents = null;
 
         if ($this->isSnapshotProvided($config)) {
             $aggregateRepository = $config['snapshot']['repository'] ?? AggregateSnapshotRepository::class;
             $snapshotStoreId = $this->app->get($config['snapshot']['store']);
-            $persistEveryEvents = 1 === $config['snapshot']['persist_every_x_events'];
         }
 
         if (null === $aggregateRepository) {
@@ -95,7 +93,6 @@ final class DefaultRepositoryManager implements RepositoryManager
             $this->makeAggregateCacheDriver($aggregateType->aggregateRootClassName(), $config['cache'] ?? []),
             $this->makeAggregateEventReleaser($streamName),
             $snapshotStoreId,
-            $persistEveryEvents
         );
     }
 
