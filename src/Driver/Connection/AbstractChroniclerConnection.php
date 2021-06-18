@@ -45,7 +45,7 @@ abstract class AbstractChroniclerConnection implements ChroniclerConnection
         $query = $this->queryBuilder($streamName);
 
         if ( ! $this->persistenceStrategy->isOneStreamPerAggregate()) {
-            $query = $query->whereJsonContains('headers->__aggregate_id', $aggregateId->toString());
+            $query = $query->where('aggregate_id', $aggregateId->toString());
         }
 
         $query = $query->orderBy('no', $direction);

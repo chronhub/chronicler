@@ -22,10 +22,10 @@ class PgsqlQueryScope extends ConnectionQueryScope
 
         $callback = function (Builder $query) use ($aggregateId, $aggregateType, $aggregateVersion, $direction): void {
             $query
-                ->whereJsonContains('headers->__aggregate_id', $aggregateId)
-                ->whereJsonContains('headers->__aggregate_type', $aggregateType)
-                ->whereRaw('CAST(headers->>\'__aggregate_version\' AS INT) > ' . $aggregateVersion)
-                ->orderByRaw('CAST(headers->>\'__aggregate_version\' AS INT) ' . $direction);
+                ->where('aggregate_id', $aggregateId)
+                ->where('aggregate_type', $aggregateType)
+                ->where('aggregate_version)', '>', $aggregateVersion)
+                ->orderBy('no', $direction);
         };
 
         return $this->wrap($callback);

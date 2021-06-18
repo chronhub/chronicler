@@ -25,6 +25,9 @@ class EventConverter
         $serializedEvent = [
             'event_id'   => (string) $data['headers'][Header::EVENT_ID],
             'event_type' => $data['headers'][Header::EVENT_TYPE],
+            'aggregate_id' => (string) $data['headers'][Header::AGGREGATE_ID],
+            'aggregate_type' => (string) $data['headers'][Header::AGGREGATE_TYPE],
+            'aggregate_version' => $data['headers'][Header::AGGREGATE_VERSION],
             'content'    => $this->jsonEncoder->encode($data['content']),
             'headers'    => $this->jsonEncoder->encode($data['headers']),
             'created_at' => (string) $data['headers'][Header::EVENT_TIME],
