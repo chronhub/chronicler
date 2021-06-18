@@ -24,7 +24,7 @@ class PgsqlQueryScope extends ConnectionQueryScope
             $query
                 ->where('aggregate_id', $aggregateId)
                 ->where('aggregate_type', $aggregateType)
-                ->where('aggregate_version)', '>', $aggregateVersion)
+                ->where('aggregate_version', '>', $aggregateVersion)
                 ->orderBy('no', $direction);
         };
 
