@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Chronhub\Chronicler\Driver\Connection\Persistence;
 
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
 use Chronhub\Chronicler\Stream\StreamName;
 use Chronhub\Foundation\Message\DomainEvent;
 use Chronhub\Chronicler\Driver\Connection\EventConverter;
@@ -24,22 +25,17 @@ final class PgsqlAggregateStreamPersistence implements StreamPersistence
 
     public function up(string $tableName): ?callable
     {
-        DB::statement(
-            'CREATE TABLE ' . $tableName . ' (
-                no BIGSERIAL,
-                event_id UUID NOT NULL,
-                event_type VARCHAR(100) NOT NULL,
-                content JSON NOT NULL,
-                headers JSONB NOT NULL,
-                created_at TIMESTAMP(6) NOT NULL,
-                PRIMARY KEY (no),
-                UNIQUE (event_id)
-            );'
-        );
-
-        DB::statement(
-            "CREATE UNIQUE INDEX on $tableName ((headers->>'__aggregate_version'));"
-        );
+        Schema::create($tableName, function (Blueprint $table): void {
+            $table->id('no');
+            $table->uuid('event_id')->unique();
+            $table->string('event_type');
+            $table->json('content');
+            $table->jsonb('headers');
+            $table->uuid('aggregate_id');
+            $table->string('aggregate_type');
+            $table->bigInteger('aggregate_version')->unique();
+            $table->timestampTz('created_at', 6);
+        });
 
         return null;
     }
